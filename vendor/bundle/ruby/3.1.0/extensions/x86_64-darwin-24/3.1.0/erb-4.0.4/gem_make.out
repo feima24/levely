@@ -1,0 +1,16 @@
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/erb-4.0.4/ext/erb/escape
+/Users/str_hym/.rbenv/versions/3.1.3/bin/ruby -I /Users/str_hym/.rbenv/versions/3.1.3/lib/ruby/3.1.0 extconf.rb
+creating Makefile
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/erb-4.0.4/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-nvh1iu sitelibdir\=./.gem.20260321-5435-nvh1iu clean
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/erb-4.0.4/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-nvh1iu sitelibdir\=./.gem.20260321-5435-nvh1iu
+compiling escape.c
+linking shared-object erb/escape.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.1'
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/erb-4.0.4/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-nvh1iu sitelibdir\=./.gem.20260321-5435-nvh1iu install
+/usr/bin/install -c -m 0755 escape.bundle ./.gem.20260321-5435-nvh1iu/erb

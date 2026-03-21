@@ -1,0 +1,16 @@
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+/Users/str_hym/.rbenv/versions/3.1.3/bin/ruby -I /Users/str_hym/.rbenv/versions/3.1.3/lib/ruby/3.1.0 extconf.rb
+creating Makefile
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-e3d5c6 sitelibdir\=./.gem.20260321-5435-e3d5c6 clean
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-e3d5c6 sitelibdir\=./.gem.20260321-5435-e3d5c6
+compiling cparse.c
+linking shared-object racc/cparse.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.1'
+
+current directory: /Users/str_hym/git/dev/levely/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260321-5435-e3d5c6 sitelibdir\=./.gem.20260321-5435-e3d5c6 install
+/usr/bin/install -c -m 0755 cparse.bundle ./.gem.20260321-5435-e3d5c6/racc
