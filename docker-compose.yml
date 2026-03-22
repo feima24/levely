@@ -1,0 +1,16 @@
+# PostgreSQL のみ。Rails はホストで bin/rails server する想定（host: localhost）。
+services:
+  db:
+    image: postgres:15
+    container_name: levely-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: levely_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

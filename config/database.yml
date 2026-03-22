@@ -1,32 +1,25 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+# PostgreSQL (development/test: Docker の db を localhost:5432 で利用)
+#   Gemfile: gem "pg"
+#   起動: docker compose up -d
 #
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
+  encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  username: postgres
+  password: password
+  host: localhost
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: levely_development
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
+# テスト DB は development とは別名にする（同時実行・データ混在を防ぐ）
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: levely_test
 
-
-# SQLite3 write its data on the local filesystem, as such it requires
-# persistent disks. If you are deploying to a managed service, you should
-# make sure it provides disk persistence, as many don't.
-#
-# Similarly, if you deploy your application as a Docker container, you must
-# ensure the database is located in a persisted volume.
+# 本番（Render 等）は DATABASE_URL に接続情報が含まれる
 production:
   <<: *default
-  # database: path/to/persistent/storage/production.sqlite3
+  url: <%= ENV["DATABASE_URL"] %>
