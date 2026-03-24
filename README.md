@@ -26,6 +26,8 @@
 
    `.env` を編集し、ローカルの PostgreSQL のユーザー名・パスワード・DB 名などを実際の値に合わせてください。
 
+   **PostgreSQL を Docker（OrbStack 等）で動かす場合:** `.env` を用意したうえで、リポジトリ直下で `docker compose up -d` します。`config/database.yml` の `LEVELY_DATABASE_*` と `docker-compose.yml` は同じ変数名で揃えています（ホストの Rails からは `LEVELY_DATABASE_HOST=localhost` のまま接続）。
+
 3. データベースの準備
 
    ```bash

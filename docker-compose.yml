@@ -1,0 +1,28 @@
+# ローカル開発用 PostgreSQL のみ（Rails はホストで `bin/rails server` を想定）。
+# `config/database.yml` は LEVELY_DATABASE_* を参照するため、ここでも同じ名前を使います。
+# プロジェクト直下の `.env` があれば Compose が変数展開に利用します（`.env.example` をコピーして用意）。
+#
+#   docker compose up -d
+#   bin/rails db:prepare
+#
+# 本番（Render）では DATABASE_URL を使うため、このファイルはローカル専用です。
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${LEVELY_DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${LEVELY_DATABASE_PASSWORD}
+      POSTGRES_DB: ${LEVELY_DATABASE_DEVELOPMENT_NAME:-levely_development}
+    ports:
+      - "${LEVELY_DATABASE_PORT:-5432}:5432"
+    volumes:
+      - levely_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  levely_postgres_data:
