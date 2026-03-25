@@ -1,0 +1,31 @@
+# PostgreSQL（Rails 7.2 / pg gem）
+#
+# 接続情報はソースに直書きせず、環境変数から読みます。
+# ローカル: リポジトリ直下の `.env`（git 管理外）を dotenv-rails が読み込みます。
+# 本番（Render）: PostgreSQL を Web サービスにリンクすると `DATABASE_URL` が自動で入ります。
+#   手動で足す場合は Render ダッシュボードの Environment に設定してください。
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("LEVELY_DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("LEVELY_DATABASE_PORT", "5432").to_i %>
+  username: <%= ENV.fetch("LEVELY_DATABASE_USERNAME", "postgres") %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("LEVELY_DATABASE_DEVELOPMENT_NAME", "levely_development") %>
+  password: <%= ENV["LEVELY_DATABASE_PASSWORD"] %>
+
+# テスト用 DB 名のみ分離。CI では `LEVELY_DATABASE_PASSWORD` や `DATABASE_URL` を合わせて渡す。
+test:
+  <<: *default
+  database: <%= ENV.fetch("LEVELY_DATABASE_TEST_NAME", "levely_test") %>
+  password: <%= ENV["LEVELY_DATABASE_PASSWORD"] %>
+
+# 本番は Render の `DATABASE_URL`（postgres://...）を前提とする。
+# `url` 指定時は host / username / password 等は URL に含まれる値が使われます。
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
