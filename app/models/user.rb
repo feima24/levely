@@ -4,6 +4,12 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-         has_many :categories, dependent: :destroy
-         has_many :daily_logs, dependent: :destroy
+  has_many :categories, dependent: :destroy
+  has_many :daily_logs, dependent: :destroy
+
+  validates :password, format: {
+    with: /\A(?=.*[a-zA-Z])(?=.*\d).{10,}\z/,
+    message: "は10文字以上の英数字を含む必要があります",
+    allow_blank: true
+  }
 end
