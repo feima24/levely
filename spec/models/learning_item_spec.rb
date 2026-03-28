@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe LearningItem, type: :model do
   describe "バリデーション" do
     let(:user) { User.create!(email: "test@example.com", password: "password123") }
-    let(:daily_log) { DailyLog.create!(user: user, date: Date.today) }
+    let(:daily_log) { DailyLog.create!(user: user, date: Time.zone.today) }
     let(:category) { Category.create!(user: user, name: "Ruby") }
 
     context "本文と学習時間の両方がある場合" do
