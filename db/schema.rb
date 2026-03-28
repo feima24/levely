@@ -10,9 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_27_112950) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_28_083506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name"
+    t.string "normalized_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "normalized_name"], name: "index_categories_on_user_id_and_normalized_name", unique: true
+    t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "daily_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "date"], name: "index_daily_logs_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_daily_logs_on_user_id"
+  end
+
+  create_table "learning_items", force: :cascade do |t|
+    t.bigint "daily_log_id", null: false
+    t.bigint "category_id", null: false
+    t.text "body_markdown"
+    t.integer "duration_minutes"
+    t.integer "lock_version", default: 0, null: false
+    t.string "client_uuid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_learning_items_on_category_id"
+    t.index ["daily_log_id"], name: "index_learning_items_on_daily_log_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -25,4 +57,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_27_112950) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "categories", "users"
+  add_foreign_key "daily_logs", "users"
+  add_foreign_key "learning_items", "categories"
+  add_foreign_key "learning_items", "daily_logs"
 end
