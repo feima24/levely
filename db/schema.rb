@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_28_082920) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_28_083506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_28_082920) do
     t.index ["user_id"], name: "index_daily_logs_on_user_id"
   end
 
+  create_table "learning_items", force: :cascade do |t|
+    t.bigint "daily_log_id", null: false
+    t.bigint "category_id", null: false
+    t.text "body_markdown"
+    t.integer "duration_minutes"
+    t.integer "lock_version", default: 0, null: false
+    t.string "client_uuid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_learning_items_on_category_id"
+    t.index ["daily_log_id"], name: "index_learning_items_on_daily_log_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -47,4 +60,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_28_082920) do
 
   add_foreign_key "categories", "users"
   add_foreign_key "daily_logs", "users"
+  add_foreign_key "learning_items", "categories"
+  add_foreign_key "learning_items", "daily_logs"
 end
