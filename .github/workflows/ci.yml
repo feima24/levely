@@ -89,7 +89,7 @@ jobs:
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-        run: bin/rspec
+        run: bin/rails db:create db:migrate && bin/rspec
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
