@@ -1,0 +1,41 @@
+<h1><%= @date %> の学習ログ</h1>
+
+<%# 保存済みアイテムの一覧 %>
+<% if @learning_items.any? %>
+  <% @learning_items.each do |item| %>
+    <div style="border: 1px solid #ccc; margin: 8px; padding: 8px;">
+      <p>カテゴリ: <%= item.category.name %></p>
+      <p>本文: <%= item.body_markdown %></p>
+      <p>学習時間: <%= item.duration_minutes %>分</p>
+      <%= button_to "削除", learning_item_path(item), method: :delete,
+          data: { turbo_confirm: "削除しますか？" } %>
+    </div>
+  <% end %>
+<% else %>
+  <p>まだ記録がありません。</p>
+<% end %>
+
+<%# 新規追加フォーム %>
+<h2>新規追加</h2>
+<%= form_with url: learning_items_path do |f| %>
+  <%= hidden_field_tag :date, @date %>
+
+  <div>
+    <label>カテゴリ</label>
+    <%= select_tag "learning_item[category_id]",
+        options_from_collection_for_select(@categories, :id, :name),
+        include_blank: "選択してください" %>
+  </div>
+
+  <div>
+    <label>学習ログ（Markdown）</label>
+    <%= text_area_tag "learning_item[body_markdown]", nil, rows: 5 %>
+  </div>
+
+  <div>
+    <label>学習時間（分）</label>
+    <%= number_field_tag "learning_item[duration_minutes]", nil, min: 1 %>
+  </div>
+
+  <%= submit_tag "保存" %>
+<% end %>
