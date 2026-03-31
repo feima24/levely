@@ -4,15 +4,14 @@ class LearningItemsController < ApplicationController
 
   def create
     date = Date.iso8601(params[:date])
-    daily_log = current_user.daily_logs.find_or_create_by!(date: date)
-    @item = daily_log.learning_items.build(learning_item_params)
+    @item = build_learning_item(date)
 
     if @item.save
       redirect_to daily_log_path(date)
     else
-      render plain: @item.errors.full_messages.join(", "), status: :unprocessable_entity
+      render plain: @item.errors.full_messages.join(", "), status: :unprocessable_content
     end
-  rescue Date::Error, ArgumentError
+  rescue ArgumentError
     render plain: "Invalid date", status: :bad_request
   end
 
@@ -21,7 +20,7 @@ class LearningItemsController < ApplicationController
     if @item.update(learning_item_params)
       render json: @item
     else
-      render json: { errors: @item.errors }, status: :unprocessable_entity
+      render json: { errors: @item.errors }, status: :unprocessable_content
     end
   end
 
@@ -53,5 +52,10 @@ class LearningItemsController < ApplicationController
       :category_id, :body_markdown, :duration_minutes,
       :lock_version, :client_uuid
     )
+  end
+
+  def build_learning_item(date)
+    daily_log = current_user.daily_logs.find_or_create_by!(date: date)
+    daily_log.learning_items.build(learning_item_params)
   end
 end
