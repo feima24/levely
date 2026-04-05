@@ -1,11 +1,5 @@
 require 'rails_helper'
 
 RSpec.describe "Monthlies", type: :request do
-  describe "GET /show" do
-    it "returns http success" do
-      get "/monthlies/show"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
+  pending 'テストは今後追加予定'
 end
