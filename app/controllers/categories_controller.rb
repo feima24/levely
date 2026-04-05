@@ -9,7 +9,7 @@ class CategoriesController < ApplicationController
       redirect_to categories_path, notice: "更新しました"
     else
       @categories = current_user.categories.order(:name)
-      render :index, status: :unprocessable_entity
+      render :index, status: :unprocessable_content
     end
   end
 
