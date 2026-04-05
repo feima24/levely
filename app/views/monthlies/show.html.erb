@@ -1,0 +1,33 @@
+<h1><%= @month.strftime('%Y年%m月') %></h1>
+
+<h2>カレンダー</h2>
+<%= link_to '前月', monthly_path((@month << 1).strftime('%Y-%m')) %>
+<%= link_to '翌月', monthly_path((@month >> 1).strftime('%Y-%m')) %>
+
+<table>
+  <tr>
+    <% %w[日 月 火 水 木 金 土].each do |d| %>
+      <th><%= d %></th>
+    <% end %>
+  </tr>
+  <% calendar_weeks(@month).each do |week| %>
+    <tr>
+      <% week.each do |day| %>
+        <td>
+          <% if day.month == @month.month %>
+            <%= link_to day.day, daily_log_path(day) %>
+            <% minutes = @calendar_data[day] %>
+            <% if minutes&.positive? %>
+              <div><%= minutes %>分</div>
+            <% end %>
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<h2>カテゴリ別合計</h2>
+<% @category_totals.each do |category, minutes| %>
+  <p><%= category.name %>: <%= minutes %>分</p>
+<% end %>

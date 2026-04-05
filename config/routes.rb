@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :daily_logs, only: %i[show], param: :date
   resources :learning_items, only: %i[create update destroy]
   resources :categories, only: %i[index update]
+  resources :monthlies, only: %i[show], param: :month
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
