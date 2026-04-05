@@ -11,7 +11,6 @@ class LearningItemsController < ApplicationController
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
-
   rescue ArgumentError
     render plain: 'Invalid date', status: :bad_request
   end
