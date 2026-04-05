@@ -38,24 +38,31 @@ class LearningItemsController < ApplicationController
   private
 
   def find_item
-    # current_userのスコープで引く（他人のアイテムを触らせない）
-    current_user.daily_logs
-                .joins(:learning_items)
-                .merge(LearningItem.where(id: params[:id]))
-                .first!
-                .learning_items
-                .find(params[:id])
+    LearningItem
+      .joins(:daily_log)
+      .where(daily_logs: { user: current_user })
+      .find(params[:id])
   end
 
   def learning_item_params
     params.require(:learning_item).permit(
-      :category_id, :body_markdown, :duration_minutes,
+      :body_markdown, :duration_minutes,
       :lock_version, :client_uuid
     )
   end
 
   def build_learning_item(date)
-    daily_log = current_user.daily_logs.find_or_create_by!(date: date)
-    daily_log.learning_items.build(learning_item_params)
+    daily_log = current_user.daily_logs.find_by(date: date) ||
+                current_user.daily_logs.build(date: date)
+    category = find_or_create_category(params[:learning_item][:category_name])
+    daily_log.learning_items.build(learning_item_params.merge(category: category))
+  end
+
+  def find_or_create_category(name)
+    normalized = name.to_s.strip.downcase.gsub(/\s+/, ' ')
+    current_user.categories.find_or_initialize_by(normalized_name: normalized).tap do |cat|
+      cat.name ||= name.strip
+      cat.save!
+    end
   end
 end
