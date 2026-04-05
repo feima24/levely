@@ -9,6 +9,6 @@ class LearningItem < ApplicationRecord
   def body_or_duration_present
     return if body_markdown.present? || duration_minutes.present?
 
-    errors.add(:base, "学習ログか学習時間のどちらかを入力してください")
+    errors.add(:base, '学習ログか学習時間のどちらかを入力してください')
   end
 end

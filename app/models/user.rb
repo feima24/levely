@@ -9,7 +9,7 @@ class User < ApplicationRecord
 
   validates :password, format: {
     with: /\A(?=.*[a-zA-Z])(?=.*\d).{10,}\z/,
-    message: "は10文字以上の英数字を含む必要があります",
+    message: 'は10文字以上の英数字を含む必要があります',
     allow_blank: true
   }
 end

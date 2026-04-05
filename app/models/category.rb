@@ -10,6 +10,6 @@ class Category < ApplicationRecord
   private
 
   def normalize_name
-    self.normalized_name = name.to_s.strip.gsub(/\s+/, " ").downcase
+    self.normalized_name = name.to_s.strip.gsub(/\s+/, ' ').downcase
   end
 end

@@ -7,6 +7,6 @@ class DailyLogsController < ApplicationController
     @learning_items = @daily_log&.learning_items&.includes(:category) || []
     @categories = current_user.categories.order(:name)
   rescue ArgumentError
-    render plain: "Invalid date", status: :bad_request
+    render plain: 'Invalid date', status: :bad_request
   end
 end

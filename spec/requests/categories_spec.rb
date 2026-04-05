@@ -1,5 +1,5 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "Categories", type: :request do
-  pending "テストは今後追加予定"
+RSpec.describe 'Categories', type: :request do
+  pending 'テストは今後追加予定'
 end
