@@ -1,0 +1,13 @@
+<h1>カテゴリ設定</h1>
+
+<% @categories.each do |category| %>
+  <div>
+    <%= form_with model: category, url: category_path(category) do |f| %>
+      <%= f.text_field :name, value: category.name %>
+      <%= f.submit "保存" %>
+    <% end %>
+    <% if category.errors.any? %>
+      <p><%= category.errors.full_messages.join(", ") %></p>
+    <% end %>
+  </div>
+<% end %>
