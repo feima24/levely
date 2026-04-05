@@ -9,7 +9,7 @@ class LearningItemsController < ApplicationController
     if @item.save
       redirect_to daily_log_path(date)
     else
-      render plain: @item.errors.full_messages.join(', '), status: :unprocessable_content
+      render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
   rescue ArgumentError
     render plain: 'Invalid date', status: :bad_request
