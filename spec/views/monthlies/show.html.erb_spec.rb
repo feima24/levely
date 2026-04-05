@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe `monthlies/show.html.erb`, type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe 'monthlies/show.html.erb', type: :view do
+  pending 'テストは今後追加予定'
 end
