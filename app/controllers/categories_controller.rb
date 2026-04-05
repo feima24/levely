@@ -6,7 +6,7 @@ class CategoriesController < ApplicationController
   def update
     @category = current_user.categories.find(params[:id])
     if @category.update(category_params)
-      redirect_to categories_path, notice: "更新しました"
+      redirect_to categories_path, notice: '更新しました'
     else
       @categories = current_user.categories.order(:name)
       render :index, status: :unprocessable_content

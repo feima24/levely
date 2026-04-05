@@ -13,7 +13,7 @@ AllCops:
     - "config/initializers/devise.rb"
 
 Style/StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
 
 Style/FrozenStringLiteralComment:
   Enabled: false
