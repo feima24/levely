@@ -36,13 +36,13 @@ class LearningItemsController < ApplicationController
   end
 
   private
-    # current_userのスコープで引く（他人のアイテムを触らせない）
-    def find_item
-      LearningItem
-        .joins(:daily_log)
-        .where(daily_logs: { user: current_user })
-        .find(params[:id])
-    end
+
+  def find_item
+    LearningItem
+      .joins(:daily_log)
+      .where(daily_logs: { user: current_user })
+      .find(params[:id])
+  end
 
   def learning_item_params
     params.require(:learning_item).permit(
