@@ -22,9 +22,13 @@
 
   <div>
     <label>カテゴリ</label>
-    <%= select_tag "learning_item[category_id]",
-        options_from_collection_for_select(@categories, :id, :name),
-        include_blank: "選択してください" %>
+     <input type="text" name="learning_item[category_name]"
+         list="categories-list" placeholder="カテゴリ名を入力" autocomplete="off">
+    <datalist id="categories-list">
+      <% @categories.each do |cat| %>
+        <option value="<%= cat.name %>">
+      <% end %>
+    </datalist>
   </div>
 
   <div>
