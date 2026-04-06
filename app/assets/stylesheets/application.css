@@ -53,3 +53,23 @@
 /* 曜日 */
 .sunday   { color: red; }
 .saturday { color: blue; }
+
+/* 共通レイアウト */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+}
