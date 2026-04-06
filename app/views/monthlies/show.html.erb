@@ -1,33 +1,57 @@
-<h1><%= @month.strftime('%Y年%m月') %></h1>
+<div class="monthly-header">
+  <%= link_to '前月', monthly_path((@month << 1).strftime('%Y-%m')) %>
+  <h1><%= @month.strftime('%Y年%m月') %></h1>
+  <%= link_to '翌月', monthly_path((@month >> 1).strftime('%Y-%m')) %>
+</div>
 
-<h2>カレンダー</h2>
-<%= link_to '前月', monthly_path((@month << 1).strftime('%Y-%m')) %>
-<%= link_to '翌月', monthly_path((@month >> 1).strftime('%Y-%m')) %>
-
-<table>
-  <tr>
-    <% %w[日 月 火 水 木 金 土].each do |d| %>
-      <th><%= d %></th>
-    <% end %>
-  </tr>
-  <% calendar_weeks(@month).each do |week| %>
-    <tr>
-      <% week.each do |day| %>
-        <td>
-          <% if day.month == @month.month %>
-            <%= link_to day.day, daily_log_path(day) %>
-            <% minutes = @calendar_data[day] %>
-            <% if minutes&.positive? %>
-              <div><%= minutes %>分</div>
-            <% end %>
+<div class="monthly-layout">
+  <%# 左: カレンダー %>
+  <div class="monthly-calendar">
+    <table>
+      <thead>
+        <tr>
+          <% %w[日 月 火 水 木 金 土].each do |d| %>
+            <th class="<%= d == '日' ? 'sunday' : d == '土' ? 'saturday' : '' %>"><%= d %></th>
           <% end %>
-        </td>
-      <% end %>
-    </tr>
-  <% end %>
-</table>
+        </tr>
+      </thead>
+      <tbody>
+        <% calendar_weeks(@month).each do |week| %>
+          <tr>
+            <% week.each do |day| %>
+              <td class="<%= calendar_cell_class(day, @month) %>">
+                <% if day.month == @month.month %>
+                  <% if day > Time.zone.today %>
+                    <span class="day-number"><%= day.day %></span>
+                  <% else %>
+                    <%= link_to day.day, daily_log_path(day), class: 'day-number' %>
+                    <% unless @calendar_data[day].nil? %>
+                    <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"></div>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 
-<h2>カテゴリ別合計</h2>
-<% @category_totals.each do |category, minutes| %>
-  <p><%= category.name %>: <%= minutes %>分</p>
-<% end %>
+  <%# 右: カテゴリ別合計 %>
+  <div class="monthly-summary">
+    <h2>カテゴリ別合計</h2>
+    <% if @category_totals.empty? %>
+      <p>記録がありません</p>
+    <% else %>
+      <table class="category-totals">
+        <% @category_totals.each do |category, minutes| %>
+          <tr>
+            <td><%= category.name %></td>
+            <td><%= minutes / 60 %>h <%= minutes % 60 %>m</td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+</div>

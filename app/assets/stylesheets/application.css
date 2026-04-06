@@ -13,3 +13,43 @@
  *= require_tree .
  *= require_self
  */
+
+ /* app/assets/stylesheets/monthlies.css */
+
+.monthly-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* 2カラムレイアウト */
+.monthly-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .monthly-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ドット */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: 2px auto;
+}
+.dot--weak   { background-color: #a8d8a8; }
+.dot--strong { background-color: #2e7d32; }
+
+/* セルの状態 */
+.future  { opacity: 0.3; pointer-events: none; }
+.today   { background-color: #fff9c4; }
+.other-month { visibility: hidden; }
+
+/* 曜日 */
+.sunday   { color: red; }
+.saturday { color: blue; }
