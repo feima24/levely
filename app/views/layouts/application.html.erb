@@ -23,8 +23,8 @@
     <% if user_signed_in? %>
       <div class="app-layout">
         <nav class="sidebar">
-          <%= link_to '月次', monthly_path(Time.zone.today.strftime('%Y-%m')) %>
-          <%= link_to '履歴', '#' %>
+          <%= link_to 'ホーム', monthly_path(Time.zone.today.strftime('%Y-%m')) %>
+          <%= link_to '履歴', histories_path %>
           <%= link_to '設定', categories_path %>
           <%= button_to 'ログアウト', destroy_user_session_path, method: :delete %>
         </nav>
