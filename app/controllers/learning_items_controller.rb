@@ -7,7 +7,7 @@ class LearningItemsController < ApplicationController
     @item = build_learning_item(date)
 
     if @item.save
-      redirect_to daily_log_path(date)
+      render json: @item.as_json(only: %i[id lock_version client_uuid]), status: :created
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
@@ -18,21 +18,21 @@ class LearningItemsController < ApplicationController
   def update
     @item = find_item
     if @item.update(learning_item_params)
-      render json: @item
+      render json: @item.as_json(only: %i[id lock_version])
     else
-      render json: { errors: @item.errors }, status: :unprocessable_content
+      render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
+  rescue ActiveRecord::StaleObjectError
+    render json: { errors: ['他の端末で変更されました。再読込すると最新の内容に更新されます。'] }, status: :conflict
   end
 
   def destroy
     @item = find_item
     daily_log = @item.daily_log
     @item.destroy!
-
     # 最後の行を削除したらDailyLogも消す
     daily_log.destroy! if daily_log.learning_items.empty?
-
-    redirect_to daily_log_path(daily_log.date), status: :see_other
+    head :no_content
   end
 
   private
