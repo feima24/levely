@@ -17,13 +17,15 @@ class LearningItemsController < ApplicationController
 
   def update
     @item = find_item
-    if @item.update(learning_item_params)
+    apply_params_to(@item)
+
+    if @item.save
       render json: @item.as_json(only: %i[id lock_version])
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
   rescue ActiveRecord::StaleObjectError
-    render json: { errors: ['他の端末で変更されました。再読込すると最新の内容に更新されます。'] }, status: :conflict
+    render json: { conflict: true }, status: :conflict
   end
 
   def destroy
@@ -49,6 +51,21 @@ class LearningItemsController < ApplicationController
       :body_markdown, :duration_minutes,
       :lock_version, :client_uuid
     )
+  end
+
+  def learning_item_params_without_lock
+    params.require(:learning_item).permit(
+      :body_markdown, :duration_minutes, :client_uuid
+    )
+  end
+
+  def apply_params_to(item)
+    if params[:force]
+      item.reload
+      item.assign_attributes(learning_item_params_without_lock)
+    else
+      item.assign_attributes(learning_item_params)
+    end
   end
 
   def build_learning_item(date)

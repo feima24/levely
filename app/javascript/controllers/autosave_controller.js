@@ -55,8 +55,8 @@ export default class extends Controller {
     }
   }
 
-  async _save(row) {
-    const body = this._buildBody(row);
+  async _save(row, force = false) {
+    const body = this._buildBody(row, force);
     if (!body) return;
 
     const itemId = row.dataset.itemId;
@@ -75,10 +75,7 @@ export default class extends Controller {
       });
 
       if (res.status === 409) {
-        this._setStatus(
-          row,
-          "保存に失敗しました。ページを再読込してください。",
-        );
+        this._setConflictUI(row);
         return;
       }
       if (!res.ok) {
@@ -96,13 +93,14 @@ export default class extends Controller {
     }
   }
 
-  _buildBody(row) {
+  _buildBody(row, force = false) {
     const categoryName = row
       .querySelector("[data-field='category_name']")
       ?.value?.trim();
     if (!categoryName) return null;
     return {
       date: this.dateValue,
+      force,
       learning_item: {
         category_name: categoryName,
         body_markdown:
@@ -122,5 +120,23 @@ export default class extends Controller {
 
   _csrfToken() {
     return document.querySelector('meta[name="csrf-token"]').content;
+  }
+
+  async forceSave(event) {
+    const row = event.target.closest("[data-autosave-row]");
+    await this._save(row, true);
+  }
+
+  reloadPage() {
+    location.reload();
+  }
+
+  _setConflictUI(row) {
+    const el = row.querySelector("[data-autosave-status]");
+    el.innerHTML = `
+      別の場所で変更されています。
+      <button data-action="click->autosave#forceSave">このまま保存</button>
+      <button data-action="click->autosave#reloadPage">最新を読み込む</button>
+    `;
   }
 }
