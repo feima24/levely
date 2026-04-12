@@ -1,6 +1,6 @@
 class Category < ApplicationRecord
   belongs_to :user
-  has_many :learning_items, dependent: :restrict_with_exception
+  has_many :learning_items, dependent: :destroy
 
   validates :name, presence: true
   validates :normalized_name, uniqueness: { scope: :user_id }

@@ -25,8 +25,12 @@
         <nav class="sidebar">
           <%= link_to 'ホーム', monthly_path(Time.zone.today.strftime('%Y-%m')) %>
           <%= link_to '履歴', histories_path %>
-          <%= link_to '設定', categories_path %>
+          <%= link_to 'カテゴリ設定', categories_path %>
           <%= button_to 'ログアウト', destroy_user_session_path, method: :delete %>
+          <%= button_to 'アカウント削除',
+                registration_path(:user),
+                method: :delete,
+                data: { turbo_confirm: 'アカウントを削除しますか？この操作は取り消せません。' } %>
         </nav>
         <main class="main-content">
           <%= yield %>
