@@ -1,45 +1,53 @@
 <h1><%= @date %> の学習ログ</h1>
 
-<%# 保存済みアイテムの一覧 %>
-<% if @learning_items.any? %>
+<div data-controller="autosave" data-autosave-date-value="<%= @date %>">
+
   <% @learning_items.each do |item| %>
-    <div style="border: 1px solid #ccc; margin: 8px; padding: 8px;">
-      <p>カテゴリ: <%= item.category.name %></p>
-      <p>本文: <%= item.body_markdown %></p>
-      <p>学習時間: <%= item.duration_minutes %>分</p>
-      <%= button_to "削除", learning_item_path(item), method: :delete,
-          data: { turbo_confirm: "削除しますか？" } %>
+    <div data-autosave-row="<%= item.id %>"
+         data-item-id="<%= item.id %>"
+         data-lock-version="<%= item.lock_version %>"
+         data-client-uuid="<%= item.client_uuid %>"
+         style="border: 1px solid #ccc; margin: 8px; padding: 8px;">
+      <input type="text" data-field="category_name"
+             value="<%= item.category.name %>"
+             list="categories-list"
+             placeholder="カテゴリ"
+             data-action="input->autosave#schedule"
+             autocomplete="off">
+      <textarea data-field="body_markdown"
+                data-action="input->autosave#schedule"
+                rows="3"><%= item.body_markdown %></textarea>
+      <input type="number" data-field="duration_minutes"
+             value="<%= item.duration_minutes %>"
+             data-action="input->autosave#schedule"
+             placeholder="学習時間（分）" min="1">
+      <span data-autosave-status style="font-size:0.8em; color:gray;">保存済み</span>
+      <button data-action="click->autosave#destroy">削除</button>
     </div>
   <% end %>
-<% else %>
-  <p>まだ記録がありません。</p>
-<% end %>
 
-<%# 新規追加フォーム %>
-<h2>新規追加</h2>
-<%= form_with url: learning_items_path do |f| %>
-  <%= hidden_field_tag :date, @date %>
+  <template id="new-row-template">
+    <div data-autosave-row="new" data-item-id="" data-lock-version="0" data-client-uuid=""
+         style="border: 1px dashed #aaa; margin: 8px; padding: 8px;">
+      <input type="text" data-field="category_name"
+             list="categories-list" placeholder="カテゴリ"
+             data-action="input->autosave#schedule" autocomplete="off">
+      <textarea data-field="body_markdown"
+                data-action="input->autosave#schedule"
+                rows="3" placeholder="学習ログ（Markdown）"></textarea>
+      <input type="number" data-field="duration_minutes"
+             data-action="input->autosave#schedule"
+             placeholder="学習時間（分）" min="1">
+      <span data-autosave-status style="font-size:0.8em; color:gray;">未保存</span>
+      <button data-action="click->autosave#destroy">削除</button>
+    </div>
+  </template>
 
-  <div>
-    <label>カテゴリ</label>
-     <input type="text" name="learning_item[category_name]"
-         list="categories-list" placeholder="カテゴリ名を入力" autocomplete="off">
-    <datalist id="categories-list">
-      <% @categories.each do |cat| %>
-        <option value="<%= cat.name %>">
-      <% end %>
-    </datalist>
-  </div>
+  <datalist id="categories-list">
+    <% @categories.each do |cat| %>
+      <option value="<%= cat.name %>">
+    <% end %>
+  </datalist>
 
-  <div>
-    <label>学習ログ（Markdown）</label>
-    <%= text_area_tag "learning_item[body_markdown]", nil, rows: 5 %>
-  </div>
-
-  <div>
-    <label>学習時間（分）</label>
-    <%= number_field_tag "learning_item[duration_minutes]", nil, min: 1 %>
-  </div>
-
-  <%= submit_tag "保存" %>
-<% end %>
+  <button data-action="click->autosave#addRow">＋ 行を追加</button>
+</div>

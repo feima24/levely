@@ -7,7 +7,7 @@ class LearningItemsController < ApplicationController
     @item = build_learning_item(date)
 
     if @item.save
-      redirect_to daily_log_path(date)
+      render json: @item.as_json(only: %i[id lock_version client_uuid]), status: :created
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
@@ -17,22 +17,24 @@ class LearningItemsController < ApplicationController
 
   def update
     @item = find_item
-    if @item.update(learning_item_params)
-      render json: @item
+    apply_params_to(@item)
+
+    if @item.save
+      render json: @item.as_json(only: %i[id lock_version])
     else
-      render json: { errors: @item.errors }, status: :unprocessable_content
+      render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
+  rescue ActiveRecord::StaleObjectError
+    render json: { conflict: true }, status: :conflict
   end
 
   def destroy
     @item = find_item
     daily_log = @item.daily_log
     @item.destroy!
-
     # 最後の行を削除したらDailyLogも消す
     daily_log.destroy! if daily_log.learning_items.empty?
-
-    redirect_to daily_log_path(daily_log.date), status: :see_other
+    head :no_content
   end
 
   private
@@ -49,6 +51,21 @@ class LearningItemsController < ApplicationController
       :body_markdown, :duration_minutes,
       :lock_version, :client_uuid
     )
+  end
+
+  def learning_item_params_without_lock
+    params.require(:learning_item).permit(
+      :body_markdown, :duration_minutes, :client_uuid
+    )
+  end
+
+  def apply_params_to(item)
+    if params[:force]
+      item.reload
+      item.assign_attributes(learning_item_params_without_lock)
+    else
+      item.assign_attributes(learning_item_params)
+    end
   end
 
   def build_learning_item(date)
