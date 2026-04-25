@@ -1,0 +1,55 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: var(--rpg-panel);
+  border-right: 3px solid var(--rpg-border);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.sidebar-title {
+  color: var(--rpg-accent);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rpg-border);
+}
+
+.sidebar a,
+.sidebar button {
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-text);
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: block;
+  width: 100%;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+  color: var(--rpg-accent);
+}
+
+.sidebar a:hover::before,
+.sidebar button:hover::before {
+  content: '▶ ';
+}
+
+.sidebar .danger-btn        { color: var(--rpg-danger); margin-top: auto; }
+.sidebar .danger-btn:hover  { color: var(--rpg-danger); }
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+}
