@@ -51,12 +51,16 @@ body {
 
 /* フラッシュメッセージ */
 .notice, .alert {
-  margin: 0.5rem 1rem;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  max-width: 360px;
+  z-index: 1000;
   padding: 0.5rem 1rem;
   border: 2px solid;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
 }
-.notice { border-color: var(--rpg-border); background-color: #0d2040; }
+.notice { border-color: var(--rpg-success); background-color: #0d2a0d; color: var(--rpg-success); }
 .alert { border-color: var(--rpg-danger); background-color: #2a0d0d; color: var(--rpg-danger); font-size: 0.75rem; }
 .notice::before { content: '► '; }
 .alert::before  { content: '⚠ '; }

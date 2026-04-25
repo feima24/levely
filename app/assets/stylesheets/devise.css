@@ -37,6 +37,12 @@
   padding: 1.5rem 2rem;
 }
 
+.devise-form .alert {
+  position: static;
+  max-width: none;
+  margin-bottom: 1rem;
+}
+
 .devise-form .field {
   margin-bottom: 1rem;
 }
