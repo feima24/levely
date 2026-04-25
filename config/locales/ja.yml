@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    errors:
+      messages:
+        not_found: "が見つかりません。"
+    models:
+      user: "アカウント"
+    attributes:
+      user:
+        email: "メールアドレス"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認）"
