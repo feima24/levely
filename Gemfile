@@ -36,6 +36,7 @@ gem 'bootsnap', require: false
 
 # Authentication
 gem 'devise', '~> 5.0'
+gem 'rails-i18n'
 
 group :development, :test do
   # Load .env into ENV for local development and test [https://github.com/bkeepers/dotenv]

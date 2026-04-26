@@ -13,13 +13,16 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    <!-- ゲーム風ピクセルフォント(DotGothic16)の読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <% if notice %><p class="notice"><%= notice %></p><% end %>
     <% if user_signed_in? %>
       <div class="app-layout">
         <nav class="sidebar">
@@ -37,7 +40,8 @@
         </main>
       </div>
     <% else %>
-      <%= yield %>
+      <div class="devise-wrapper">
+        <%= yield %>
+      </div>
     <% end %>
   </body>
-</html>

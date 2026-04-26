@@ -1,0 +1,60 @@
+.monthly-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.monthly-layout {
+  display: grid;
+  grid-template-columns: 2fr 220px;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .monthly-layout { grid-template-columns: 1fr; }
+}
+
+/* カレンダーテーブル */
+.monthly-calendar table { width: 100%; border-collapse: collapse; }
+.monthly-calendar th {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  padding: 0.3rem;
+  text-align: center;
+}
+.monthly-calendar td {
+  border: 1px solid #1e3050;
+  min-height: 60px;
+  padding: 0.5rem;
+  text-align: center;
+  vertical-align: top;
+  font-size: 0.85rem;
+}
+
+.day-number {
+  display: block;
+  color: var(--rpg-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.day-number:hover { color: var(--rpg-accent); }
+
+/* セル状態 */
+.future      { opacity: 0.3; pointer-events: none; }
+.today       { background-color: #1e3a5f; border: 2px solid var(--rpg-accent) !important; }
+.today .day-number { color: var(--rpg-accent); }
+.other-month { visibility: hidden; }
+
+/* 曜日 */
+.sunday   { color: #ff6b6b; }
+.saturday { color: #87ceeb; }
+
+/* 学習強度ドット */
+.dot          { width: 8px; height: 8px; border-radius: 50%; margin: 2px auto; }
+.dot--weak    { background-color: var(--rpg-success); }
+.dot--strong  { background-color: var(--rpg-strong); }
+
+/* サマリー */
+.category-totals { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.category-totals td { padding: 0.3rem 0.5rem; border-bottom: 1px solid #1e3050; }
