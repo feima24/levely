@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_28_083506) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_27_125254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "vector"
 
   create_table "categories", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -22,6 +23,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_28_083506) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "normalized_name"], name: "index_categories_on_user_id_and_normalized_name", unique: true
     t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "daily_log_embeddings", force: :cascade do |t|
+    t.bigint "daily_log_id", null: false
+    t.vector "embedding", limit: 1536
+    t.string "embedding_model", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["daily_log_id"], name: "index_daily_log_embeddings_on_daily_log_id"
   end
 
   create_table "daily_logs", force: :cascade do |t|
@@ -59,6 +69,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_28_083506) do
   end
 
   add_foreign_key "categories", "users"
+  add_foreign_key "daily_log_embeddings", "daily_logs"
   add_foreign_key "daily_logs", "users"
   add_foreign_key "learning_items", "categories"
   add_foreign_key "learning_items", "daily_logs"
