@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   devise_for :users
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  resources :daily_logs, only: %i[show], param: :date
+  resources :daily_logs, only: %i[show], param: :date do
+    member do
+      post :find_related
+    end
+  end
   resources :learning_items, only: %i[create update destroy]
   resources :categories, only: %i[index update]
   resources :monthlies, only: %i[show], param: :month
