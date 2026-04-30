@@ -3,6 +3,7 @@
   min-height: 100vh;
 }
 
+/* ── サイドバー ── */
 .sidebar {
   width: 200px;
   background-color: var(--rpg-panel);
@@ -13,41 +14,153 @@
   gap: 0.3rem;
 }
 
-.sidebar-title {
-  color: var(--rpg-accent);
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+.sidebar-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
   border-bottom: 1px solid var(--rpg-border);
 }
 
-.sidebar a,
-.sidebar button {
+.sidebar-logo-text {
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-accent);
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+}
+
+.sidebar-logo-sub {
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-muted);
+  font-size: 0.6rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.nav-item {
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-text);
+  text-decoration: none;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--rpg-accent);
+}
+
+.nav-icon {
+  width: 1.2em;
+  text-align: center;
+  display: inline-block;
+  filter: brightness(3);
+}
+
+nav-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.nav-item:hover {
+  color: var(--rpg-accent);
+}
+
+/* ── メインエリア ── */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.4rem 1rem;
+  background: var(--rpg-panel);
+  border-bottom: 2px solid var(--rpg-border);
+}
+
+/* ── ユーザーメニュー ── */
+.user-menu {
+  position: relative;
+}
+
+.user-menu summary {
+  list-style: none;
+}
+
+.user-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.user-icon-btn {
+  background: none;
+  border: 2px solid var(--rpg-border);
+  padding: 0.3rem 0.4rem;
+  cursor: pointer;
+  color: var(--rpg-text);
+  display: flex;
+  align-items: center;
+}
+
+.user-icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.user-icon-btn:hover {
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 100;
+  background: var(--rpg-panel);
+  border: 2px solid var(--rpg-border);
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
   font-family: 'DotGothic16', monospace;
   color: var(--rpg-text);
   background: transparent;
   border: none;
-  padding: 0.35rem 0.6rem;
+  padding: 0.5rem 0.8rem;
   text-decoration: none;
   text-align: left;
   cursor: pointer;
-  font-size: 0.9rem;
-  display: block;
+  font-size: 0.85rem;
   width: 100%;
 }
 
-.sidebar a:hover,
-.sidebar button:hover {
+.dropdown-item:hover {
   color: var(--rpg-accent);
+  background: rgba(255, 215, 0, 0.05);
 }
 
-.sidebar a:hover::before,
-.sidebar button:hover::before {
-  content: '▶ ';
+.danger-item {
+  color: var(--rpg-danger);
 }
 
-.sidebar .danger-btn        { color: var(--rpg-danger); margin-top: auto; }
-.sidebar .danger-btn:hover  { color: var(--rpg-danger); }
+.danger-item:hover {
+  color: var(--rpg-danger);
+  background: rgba(255, 107, 107, 0.08);
+}
 
 .main-content {
   flex: 1;
