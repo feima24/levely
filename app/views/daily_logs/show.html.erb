@@ -2,6 +2,7 @@
 
 <div data-controller="autosave" data-autosave-date-value="<%= @date %>">
 
+  <%# 学習項目の一覧表示 %>
   <% @learning_items.each do |item| %>
     <div data-autosave-row="<%= item.id %>"
          data-item-id="<%= item.id %>"
@@ -50,4 +51,18 @@
   </datalist>
 
   <button data-action="click->autosave#addRow">＋ 行を追加</button>
+</div>
+
+<%# 関連する日別ログの検索 %>
+<div data-controller="related-items"
+     data-related-items-date-value="<%= @date %>">
+  <button data-action="click->related-items#search"
+          data-related-items-target="button">
+    関連を探す
+  </button>
+
+  <div data-related-items-target="modal" style="display:none; border:1px solid #ccc; padding:16px; margin-top:8px;">
+    <button data-action="click->related-items#close">閉じる</button>
+    <div data-related-items-target="results"></div>
+  </div>
 </div>

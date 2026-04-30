@@ -38,6 +38,10 @@ gem 'bootsnap', require: false
 gem 'devise', '~> 5.0'
 gem 'rails-i18n'
 
+# AI / Embedding
+gem 'neighbor'
+gem 'ruby-openai'
+
 group :development, :test do
   # Load .env into ENV for local development and test [https://github.com/bkeepers/dotenv]
   gem 'dotenv-rails'
