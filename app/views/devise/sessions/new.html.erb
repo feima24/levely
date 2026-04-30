@@ -1,7 +1,7 @@
 <%= render "devise/shared/header" %>
 
 <div class="devise-form rpg-window">
-  <% if alert %><p class="alert"><%= alert %></p><% end %>
+  <% if alert.present? %><p class="alert"><%= alert %></p><% end %>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { novalidate: true }) do |f| %>
     <div class="field">
       <%= f.label :email, "メールアドレス" %>
