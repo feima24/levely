@@ -41,8 +41,8 @@ export default class extends Controller {
         .map(
           (r) => `
         <div>
-          <strong>${r.date}</strong>
-          ${r.items.map((i) => `<p>[${i.category}] ${i.body}</p>`).join("")}
+          <strong>${this.escapeHtml(r.date)}</strong>
+          ${r.items.map((i) => `<p>[${this.escapeHtml(i.category || "未分類")}] ${this.escapeHtml(i.body)}</p>`).join("")}
         </div>
       `,
         )
@@ -53,5 +53,14 @@ export default class extends Controller {
 
   close() {
     this.modalTarget.style.display = "none";
+  }
+
+  escapeHtml(text) {
+    return String(text ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 }
