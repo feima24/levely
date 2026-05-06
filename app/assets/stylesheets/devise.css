@@ -116,9 +116,10 @@
   color: var(--rpg-text);
   text-decoration: none;
   font-size: 0.85rem;
+  opacity: 0.55;
 }
 
-.devise-links a:hover { color: var(--rpg-accent); }
+.devise-links a:hover { color: var(--rpg-accent); opacity: 1; }
 
 .devise-desc {
   color: var(--rpg-muted);
@@ -143,4 +144,148 @@
 
 #error_explanation p::before {
   content: '⚠ ';
+}
+
+/* 星背景 */
+.devise-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 1px; height: 1px;
+  background: rgba(255,255,255,0.8);
+  box-shadow:
+    120px  80px 0 0 rgba(255,255,255,0.6),
+    350px 200px 0 0 rgba(255,255,255,0.4),
+    520px  60px 0 0 rgba(255,255,255,0.7),
+    750px 300px 0 0 rgba(255,255,255,0.3),
+    900px 120px 0 0 rgba(255,255,255,0.5),
+   1100px 250px 0 0 rgba(255,255,255,0.4),
+   1280px  90px 0 0 rgba(255,255,255,0.6),
+     80px 400px 0 0 rgba(255,255,255,0.3),
+    250px 500px 0 0 rgba(255,255,255,0.5),
+    600px 450px 0 0 rgba(255,255,255,0.2),
+   1000px 500px 0 0 rgba(255,255,255,0.4),
+   1350px 380px 0 0 rgba(255,255,255,0.6),
+    180px 700px 0 0 rgba(255,255,255,0.3),
+    480px 750px 0 0 rgba(255,255,255,0.5),
+    820px 680px 0 0 rgba(255,255,255,0.2),
+   1150px 720px 0 0 rgba(255,255,255,0.4),
+    300px 120px 0 0 rgba(255,255,255,0.5),
+    700px  40px 0 0 rgba(255,255,255,0.6);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* タイトルのカタカナルビ */
+.devise-title-kana {
+  font-size: 0.65rem;
+  color: var(--rpg-muted);
+  letter-spacing: 0.5em;
+  margin: 0 0 0.2rem;
+}
+
+/* タイトルを大きく */
+.devise-title {
+  color: var(--rpg-accent);
+  font-size: 3rem;
+  margin: 0;
+}
+
+/* 2行目サブタイトル */
+.devise-subtitle2 {
+  color: var(--rpg-muted);
+  font-size: 0.75rem;
+  margin: 0.2rem 0 0;
+}
+
+/* フォームのボーダーを dashed gold に */
+.devise-form.rpg-window {
+  border: 3px dashed var(--rpg-accent);
+  box-shadow: none;
+}
+
+/* ラベルの --- 装飾 */
+.rpg-field-label::before { content: '--- '; color: var(--rpg-muted); }
+.rpg-field-label::after  { content: ' ---'; color: var(--rpg-muted); }
+
+/* 点線区切り */
+.rpg-divider {
+  border: none;
+  border-top: 2px dotted var(--rpg-accent);
+  margin: 1rem 0;
+  opacity: 0.5;
+}
+
+/* メニューアイテム共通 */
+.rpg-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--rpg-text);
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  gap: 0.4rem;
+}
+
+/* アクティブ（ログインボタン）ハイライト */
+.rpg-menu-item--active {
+  background-color: rgba(255, 215, 0, 0.1);
+  color: var(--rpg-accent);
+}
+
+.rpg-menu-item:hover { color: var(--rpg-accent); }
+
+/* 右寄せヒントラベル */
+.rpg-hint {
+  margin-left: auto;
+  font-size: 0.65rem;
+  color: var(--rpg-muted);
+  letter-spacing: 0.1em;
+}
+
+/* 点滅アニメーション */
+@keyframes rpg-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.rpg-blink { animation: rpg-blink 0.8s steps(1) infinite; }
+
+/* フッター */
+.devise-footer {
+  font-size: 0.6rem;
+  color: var(--rpg-muted);
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* 二次リンクの▶はデフォルト非表示 */
+.devise-links .rpg-menu-item .rpg-blink {
+  opacity: 0;
+  animation: none;
+}
+
+.devise-links .rpg-menu-item:hover {
+  background-color: rgba(255, 215, 0, 0.1);
+}
+
+/* ホバー時に▶を出現・点滅 */
+.devise-links .rpg-menu-item:hover .rpg-blink {
+  opacity: 1;
+  animation: rpg-blink 0.8s steps(1) infinite;
+}
+
+.devise-form:has(.devise-links .rpg-menu-item:hover) .rpg-menu-item--active {
+  background-color: transparent;
+  color: var(--rpg-text);
+}
+
+.devise-form:has(.devise-links .rpg-menu-item:hover) .rpg-menu-item--active .rpg-blink {
+  opacity: 0;
+  animation: none;
 }
