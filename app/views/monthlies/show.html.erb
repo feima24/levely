@@ -10,7 +10,7 @@
     <table>
       <thead>
         <tr>
-          <% %w[日 月 火 水 木 金 土].each do |d| %>
+          <% %w[月 火 水 木 金 土 日].each do |d| %>
             <th class="<%= d == '日' ? 'sunday' : d == '土' ? 'saturday' : '' %>"><%= d %></th>
           <% end %>
         </tr>

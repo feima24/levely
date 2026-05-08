@@ -1,4 +1,3 @@
-# app/controllers/learning_items_controller.rb
 class LearningItemsController < ApplicationController
   before_action :authenticate_user!
 
@@ -7,7 +6,14 @@ class LearningItemsController < ApplicationController
     @item = build_learning_item(date)
 
     if @item.save
-      render json: @item.as_json(only: %i[id lock_version client_uuid]), status: :created
+      render json: {
+        id: @item.id,
+        lock_version: @item.lock_version,
+        client_uuid: @item.client_uuid,
+        summary: @item.summary,
+        category_name: @item.category&.name,
+        duration_minutes: @item.duration_minutes
+      }, status: :created
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
@@ -32,8 +38,7 @@ class LearningItemsController < ApplicationController
     @item = find_item
     daily_log = @item.daily_log
     @item.destroy!
-    # 最後の行を削除したらDailyLogも消す
-    daily_log.destroy! if daily_log.learning_items.empty?
+    daily_log.destroy! if daily_log.learning_items.empty? && daily_log.insights.blank?
     head :no_content
   end
 
@@ -48,14 +53,14 @@ class LearningItemsController < ApplicationController
 
   def learning_item_params
     params.require(:learning_item).permit(
-      :body_markdown, :duration_minutes,
+      :summary, :duration_minutes,
       :lock_version, :client_uuid
     )
   end
 
   def learning_item_params_without_lock
     params.require(:learning_item).permit(
-      :body_markdown, :duration_minutes, :client_uuid
+      :summary, :duration_minutes, :client_uuid
     )
   end
 
@@ -69,13 +74,13 @@ class LearningItemsController < ApplicationController
   end
 
   def build_learning_item(date)
-    daily_log = current_user.daily_logs.find_by(date: date) ||
-                current_user.daily_logs.build(date: date)
+    daily_log = current_user.daily_logs.find_or_initialize_by(date: date)
     category = find_or_create_category(params[:learning_item][:category_name])
     daily_log.learning_items.build(learning_item_params.merge(category: category))
   end
 
   def find_or_create_category(name)
+    return nil if name.blank?
     normalized = name.to_s.strip.downcase.gsub(/\s+/, ' ')
     current_user.categories.find_or_initialize_by(normalized_name: normalized).tap do |cat|
       cat.name ||= name.strip

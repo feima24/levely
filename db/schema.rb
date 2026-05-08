@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_27_125254) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_08_185136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -39,6 +39,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_27_125254) do
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "insights"
     t.index ["user_id", "date"], name: "index_daily_logs_on_user_id_and_date", unique: true
     t.index ["user_id"], name: "index_daily_logs_on_user_id"
   end
@@ -46,7 +47,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_27_125254) do
   create_table "learning_items", force: :cascade do |t|
     t.bigint "daily_log_id", null: false
     t.bigint "category_id", null: false
-    t.text "body_markdown"
+    t.text "summary"
     t.integer "duration_minutes"
     t.integer "lock_version", default: 0, null: false
     t.string "client_uuid"

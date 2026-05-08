@@ -1,14 +1,14 @@
 class LearningItem < ApplicationRecord
   belongs_to :daily_log
-  belongs_to :category
+  belongs_to :category, optional: true
 
-  validate :body_or_duration_present
+  validate :any_field_present
 
   private
 
-  def body_or_duration_present
-    return if body_markdown.present? || duration_minutes.present?
+  def any_field_present
+    return if category_id.present? || summary.present? || duration_minutes.present?
 
-    errors.add(:base, '学習ログか学習時間のどちらかを入力してください')
+    errors.add(:base, 'カテゴリ・概要・学習時間のいずれかを入力してください')
   end
 end

@@ -1,17 +1,47 @@
 class DailyLogsController < ApplicationController
   before_action :authenticate_user!
 
-  # 日別ログの表示
   def show
     @date = Date.iso8601(params[:date])
     @daily_log = current_user.daily_logs.find_by(date: @date)
     @learning_items = @daily_log&.learning_items&.includes(:category) || []
     @categories = current_user.categories.order(:name)
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          date: @date,
+          has_record: @daily_log.present?,
+          insights: @daily_log&.insights,
+          learning_items: @learning_items.map { |item|
+            {
+              id: item.id,
+              category_name: item.category&.name,
+              summary: item.summary,
+              duration_minutes: item.duration_minutes,
+              lock_version: item.lock_version
+            }
+          }
+        }
+      end
+    end
   rescue ArgumentError
     render plain: 'Invalid date', status: :bad_request
   end
 
-  # 関連する日別ログの検索
+  def update
+    @date = Date.iso8601(params[:date])
+    @daily_log = current_user.daily_logs.find_or_initialize_by(date: @date)
+    @daily_log.insights = params[:insights]
+
+    if @daily_log.save
+      render json: { success: true }
+    else
+      render json: { errors: @daily_log.errors.full_messages }, status: :unprocessable_content
+    end
+  end
+
   def find_related
     daily_log = current_user.daily_logs.find_by!(date: params[:date])
     related_logs = related_logs_for(daily_log)
@@ -44,7 +74,7 @@ class DailyLogsController < ApplicationController
 
   def learning_item_json(item)
     {
-      body: item.body_markdown,
+      body: item.summary,
       category: item.category&.name
     }
   end
@@ -56,6 +86,6 @@ class DailyLogsController < ApplicationController
   end
 
   def daily_log_text(daily_log)
-    daily_log.learning_items.pluck(:content).join("\n")
+    daily_log.learning_items.pluck(:summary).join("\n")
   end
 end

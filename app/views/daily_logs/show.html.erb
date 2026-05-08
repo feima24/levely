@@ -10,14 +10,14 @@
          data-client-uuid="<%= item.client_uuid %>"
          style="border: 1px solid #ccc; margin: 8px; padding: 8px;">
       <input type="text" data-field="category_name"
-             value="<%= item.category.name %>"
+             value="<%= item.category&.name %>"
              list="categories-list"
              placeholder="カテゴリ"
              data-action="input->autosave#schedule"
              autocomplete="off">
-      <textarea data-field="body_markdown"
+      <textarea data-field="summary"
                 data-action="input->autosave#schedule"
-                rows="3"><%= item.body_markdown %></textarea>
+                rows="3"><%= item.summary %></textarea>
       <input type="number" data-field="duration_minutes"
              value="<%= item.duration_minutes %>"
              data-action="input->autosave#schedule"
@@ -33,9 +33,9 @@
       <input type="text" data-field="category_name"
              list="categories-list" placeholder="カテゴリ"
              data-action="input->autosave#schedule" autocomplete="off">
-      <textarea data-field="body_markdown"
+      <textarea data-field="summary"
                 data-action="input->autosave#schedule"
-                rows="3" placeholder="学習ログ（Markdown）"></textarea>
+                rows="3" placeholder="概要"></textarea>
       <input type="number" data-field="duration_minutes"
              data-action="input->autosave#schedule"
              placeholder="学習時間（分）" min="1">
