@@ -1,57 +1,158 @@
-<div class="monthly-header">
-  <%= link_to '前月', monthly_path((@month << 1).strftime('%Y-%m')) %>
-  <h1><%= @month.strftime('%Y年%m月') %></h1>
-  <%= link_to '翌月', monthly_path((@month >> 1).strftime('%Y-%m')) %>
-</div>
+<div data-controller="calendar"
+     data-calendar-today-value="<%= @today %>"
+     data-calendar-month-value="<%= @month.strftime('%Y-%m') %>"
+     data-calendar-streak-value="<%= @streak_count %>"
+     data-calendar-weekly-minutes-value="<%= @weekly_minutes %>"
+     data-calendar-monthly-total-minutes-value="<%= @monthly_total_minutes %>"
+     data-calendar-categories-value="<%= @categories.map { |c| { id: c.id, name: c.name } }.to_json %>"
+     data-calendar-category-totals-value="<%= @category_totals.map { |c, m| { name: c&.name || '未分類', minutes: m } }.to_json %>"
+     data-calendar-today-data-value="<%= {
+       date: @today.to_s,
+       has_record: @today_log.present?,
+       insights: @today_log&.insights,
+       learning_items: @today_items.map { |i| {
+         id: i.id,
+         category_name: i.category&.name,
+         summary: i.summary,
+         duration_minutes: i.duration_minutes,
+         lock_version: i.lock_version
+       } }
+     }.to_json %>">
 
-<div class="monthly-layout">
-  <%# 左: カレンダー %>
-  <div class="monthly-calendar">
-    <table>
-      <thead>
-        <tr>
-          <% %w[月 火 水 木 金 土 日].each do |d| %>
-            <th class="<%= d == '日' ? 'sunday' : d == '土' ? 'saturday' : '' %>"><%= d %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% calendar_weeks(@month).each do |week| %>
-          <tr>
-            <% week.each do |day| %>
-              <td class="<%= calendar_cell_class(day, @month) %>">
-                <% if day.month == @month.month %>
-                  <% if day > Time.zone.today %>
-                    <span class="day-number"><%= day.day %></span>
-                  <% else %>
-                    <%= link_to day.day, daily_log_path(day), class: 'day-number' %>
-                    <% unless @calendar_data[day].nil? %>
-                    <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"></div>
+  <%# ===== メインレイアウト ===== %>
+  <div class="monthly-layout rpg-window">
+    <div class="monthly-nav">
+      <%= link_to '<', monthly_path((@month << 1).strftime('%Y-%m')), class: 'monthly-nav-btn' %>
+      <span class="monthly-title"><%= @month.strftime('%Y年%-m月') %></span>
+      <%= link_to '>', monthly_path((@month >> 1).strftime('%Y-%m')), class: 'monthly-nav-btn' %>
+    </div>
+
+    <div class="monthly-grid">
+      <%# 左: カレンダー %>
+      <div class="monthly-calendar">
+        <table>
+          <thead>
+            <tr>
+              <% %w[月 火 水 木 金 土 日].each do |d| %>
+                <th class="<%= d == '日' ? 'sunday' : d == '土' ? 'saturday' : '' %>"><%= d %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% calendar_weeks(@month).each do |week| %>
+              <tr>
+                <% week.each do |day| %>
+                  <td class="<%= calendar_cell_class(day, @month) %><%= ' today' if day == @today %>"
+                      data-calendar-target="cell"
+                      data-date="<%= day %>">
+                    <% if day.month == @month.month %>
+                      <% if day > Time.zone.today %>
+                        <span class="day-number"><%= day.day %></span>
+                      <% else %>
+                        <%= link_to day.day, daily_log_path(day), class: 'day-number' %>
+                        <% unless @calendar_data[day].nil? %>
+                          <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"
+                               data-calendar-target="dot"
+                               data-dot-date="<%= day %>"></div>
+                        <% end %>
+                      <% end %>
                     <% end %>
-                  <% end %>
+                  </td>
                 <% end %>
-              </td>
+              </tr>
             <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+
+      <%# 右: 日報プレビュー %>
+      <div class="monthly-panel" data-calendar-target="panel">
+        <div data-calendar-target="panelContent">
+          <div class="panel-date-header"><%= @today.strftime('%Y/%m/%d') %></div>
+          <% if @today_items.any? %>
+            <div class="panel-items">
+              <% @today_items.each do |item| %>
+                <div class="panel-item">
+                  <span class="panel-item-badge"><%= item.category&.name || '未分類' %></span>
+                  <span class="panel-item-summary"><%= item.summary %></span>
+                  <% if item.duration_minutes %>
+                    <span class="panel-item-duration"><%= item.duration_minutes %>分</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            <%= link_to '編集する', daily_log_path(@today), class: 'panel-edit-btn' %>
+          <% else %>
+            <p class="panel-empty">記録がありません</p>
+            <%= link_to '＋ 記録を作成する', daily_log_path(@today), class: 'panel-edit-btn' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <%# 右: カテゴリ別合計 %>
-  <div class="monthly-summary">
-    <h2>カテゴリ別合計</h2>
-    <% if @category_totals.empty? %>
-      <p>記録がありません</p>
-    <% else %>
-      <table class="category-totals">
-        <% @category_totals.each do |category, minutes| %>
-          <tr>
-            <td><%= category.name %></td>
-            <td><%= minutes / 60 %>h <%= minutes % 60 %>m</td>
-          </tr>
-        <% end %>
-      </table>
-    <% end %>
+  <%# ===== 月間サマリー ===== %>
+  <div class="monthly-summary-section rpg-window">
+    <div class="summary-cards">
+      <div class="summary-card">
+        <span class="summary-card-label">連続投稿</span>
+        <span class="summary-card-value"><%= @streak_count %><small>日</small></span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card-label">今週</span>
+        <span class="summary-card-value"><%= @weekly_minutes / 60 %><small>時間</small> <%= @weekly_minutes % 60 %><small>分</small></span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card-label">今月</span>
+        <span class="summary-card-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
+      </div>
+    </div>
+    <div class="summary-category">
+      <h3 class="section-heading">カテゴリ別</h3>
+      <div class="donut-wrapper">
+        <div class="donut-chart" data-calendar-target="donutChart"></div>
+        <div class="donut-legend" data-calendar-target="donutLegend">
+          <% if @category_totals.empty? %>
+            <p class="panel-empty">記録なし</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <%# ===== モーダル（Step 2で利用）===== %>
+  <div class="modal-overlay" data-calendar-target="modal" style="display:none;">
+    <div class="modal-content rpg-window">
+      <div class="modal-header">
+        <span data-calendar-target="modalTitle"></span>
+        <button class="modal-close" data-action="click->calendar#closeModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="modal-label">ふりかえり</label>
+        <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="3"></textarea>
+        <label class="modal-label">学習項目</label>
+        <div data-calendar-target="modalRows"></div>
+        <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 行を追加</button>
+      </div>
+      <div class="modal-footer">
+        <span data-calendar-target="modalStatus"></span>
+        <button class="modal-save-btn" data-action="click->calendar#saveModal">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <template id="modal-row-template" data-calendar-target="rowTemplate">
+    <div class="modal-row" data-item-id="" data-lock-version="0">
+      <input type="text" class="modal-input" data-field="category_name" list="category-list" placeholder="カテゴリ">
+      <textarea class="modal-input" data-field="summary" rows="2" placeholder="学んだこと"></textarea>
+      <input type="number" class="modal-input modal-input-minutes" data-field="duration_minutes" min="1" placeholder="分">
+      <button class="modal-row-delete" data-action="click->calendar#removeModalRow">✕</button>
+    </div>
+  </template>
+
+  <datalist id="category-list">
+    <% @categories.each do |cat| %>
+      <option value="<%= cat.name %>">
+    <% end %>
+  </datalist>
 </div>

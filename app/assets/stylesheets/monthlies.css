@@ -1,60 +1,410 @@
-.monthly-header {
+/* ===== 月ナビ ===== */
+.monthly-nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  gap: 2rem;
   margin-bottom: 1rem;
 }
 
-.monthly-layout {
+.monthly-title {
+  font-size: 1.1rem;
+  color: var(--rpg-text);
+  font-weight: bold;
+}
+
+.monthly-nav-btn {
+  color: var(--rpg-muted);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+.monthly-nav-btn:hover {
+  color: var(--rpg-accent);
+}
+
+/* ===== メインレイアウト ===== */
+.monthly-grid {
   display: grid;
-  grid-template-columns: 2fr 220px;
+  grid-template-columns: 300px 1fr;
   gap: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .monthly-layout { grid-template-columns: 1fr; }
+/* ===== カレンダー ===== */
+.monthly-calendar table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-/* カレンダーテーブル */
-.monthly-calendar table { width: 100%; border-collapse: collapse; }
 .monthly-calendar th {
   color: var(--rpg-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   padding: 0.3rem;
   text-align: center;
+  font-weight: normal;
 }
+
 .monthly-calendar td {
-  border: 1px solid #1e3050;
-  min-height: 60px;
-  padding: 0.5rem;
+  padding: 0.4rem;
   text-align: center;
   vertical-align: top;
   font-size: 0.85rem;
 }
 
+/* 日付番号 */
 .day-number {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   color: var(--rpg-text);
   text-decoration: none;
   font-size: 0.85rem;
+  transition: background-color 0.15s;
 }
-.day-number:hover { color: var(--rpg-accent); }
+.day-number:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--rpg-text);
+}
+
+/* 今日: アクセントカラーの丸 */
+.today .day-number {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+  font-weight: bold;
+}
+.today .day-number:hover {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+}
+
+/* 選択中（Step 2で使用） */
+.selected .day-number {
+  background-color: rgba(255, 215, 0, 0.2);
+  color: var(--rpg-accent);
+}
+.today.selected .day-number {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+}
 
 /* セル状態 */
-.future      { opacity: 0.3; pointer-events: none; }
-.today       { background-color: #1e3a5f; border: 2px solid var(--rpg-accent) !important; }
-.today .day-number { color: var(--rpg-accent); }
-.other-month { visibility: hidden; }
+.future       { opacity: 0.3; pointer-events: none; }
+.other-month  { visibility: hidden; }
 
-/* 曜日 */
+/* 曜日色 */
 .sunday   { color: #ff6b6b; }
 .saturday { color: #87ceeb; }
 
-/* 学習強度ドット */
-.dot          { width: 8px; height: 8px; border-radius: 50%; margin: 2px auto; }
+/* 学習ドット */
+.dot          { width: 6px; height: 6px; border-radius: 50%; margin: 2px auto 0; }
 .dot--weak    { background-color: var(--rpg-success); }
 .dot--strong  { background-color: var(--rpg-strong); }
 
-/* サマリー */
-.category-totals { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.category-totals td { padding: 0.3rem 0.5rem; border-bottom: 1px solid #1e3050; }
+/* ===== 右パネル ===== */
+.monthly-panel {
+  padding-left: 1.5rem;
+}
+
+.panel-date-header {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--rpg-text);
+  margin-bottom: 0.8rem;
+}
+
+.panel-items {
+  margin-bottom: 0.8rem;
+}
+
+.panel-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+}
+
+.panel-item-badge {
+  background-color: rgba(255, 215, 0, 0.15);
+  color: var(--rpg-accent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.panel-item-summary {
+  flex: 1;
+  color: var(--rpg-text);
+}
+
+.panel-item-duration {
+  color: var(--rpg-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.panel-edit-btn {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.85rem;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  margin-top: 0.8rem;
+}
+.panel-edit-btn:hover {
+  opacity: 0.85;
+}
+
+.panel-empty {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  padding: 0.5rem 0;
+}
+
+.panel-loading {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  animation: blink 1s infinite;
+}
+@keyframes blink { 50% { opacity: 0.4; } }
+
+/* ===== 月間サマリー ===== */
+.monthly-summary-section {
+  margin-top: 0.8rem;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card {
+  text-align: center;
+  padding: 0.4rem;
+}
+
+.summary-card-label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--rpg-muted);
+  margin-bottom: 0.15rem;
+}
+
+.summary-card-value {
+  font-size: 1rem;
+  color: var(--rpg-accent);
+}
+.summary-card-value small {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  margin: 0 0.1rem;
+}
+
+/* ===== カテゴリ別 ===== */
+.summary-category {
+  padding-top: 0.5rem;
+}
+
+.section-heading {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.4rem 0;
+}
+
+.donut-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.donut-chart {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(var(--rpg-muted) 0% 100%);
+  position: relative;
+  flex-shrink: 0;
+}
+.donut-chart::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--rpg-panel);
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--rpg-text);
+}
+
+.donut-legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.donut-legend-minutes {
+  color: var(--rpg-muted);
+  font-size: 0.7rem;
+}
+
+/* ===== モーダル ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--rpg-accent);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--rpg-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--rpg-danger); }
+
+.modal-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--rpg-muted);
+  margin-bottom: 0.3rem;
+}
+
+.modal-textarea {
+  width: 100%;
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.4rem;
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  resize: vertical;
+  margin-bottom: 0.8rem;
+  box-sizing: border-box;
+}
+
+.modal-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 60px 30px;
+  gap: 0.4rem;
+  align-items: start;
+  margin-bottom: 0.4rem;
+}
+
+.modal-input {
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.3rem;
+  font-size: 0.75rem;
+  font-family: 'DotGothic16', monospace;
+  box-sizing: border-box;
+}
+.modal-input-minutes { text-align: right; }
+
+.modal-row-delete {
+  background: none;
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.3rem;
+}
+.modal-row-delete:hover { color: var(--rpg-danger); }
+
+.modal-add-row {
+  background: none;
+  border: 1px dashed var(--rpg-border);
+  color: var(--rpg-muted);
+  width: 100%;
+  padding: 0.3rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: 'DotGothic16', monospace;
+  margin-top: 0.3rem;
+}
+.modal-add-row:hover { color: var(--rpg-accent); border-color: var(--rpg-accent); }
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.modal-save-btn {
+  background-color: var(--rpg-accent);
+  border: none;
+  color: var(--rpg-bg);
+  padding: 0.4rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+}
+.modal-save-btn:hover { opacity: 0.85; }
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 768px) {
+  .monthly-grid {
+    grid-template-columns: 1fr;
+  }
+  .monthly-panel {
+    padding-left: 0;
+    padding-top: 0.8rem;
+  }
+  .donut-wrapper {
+    flex-direction: column;
+  }
+  .modal-row {
+    grid-template-columns: 1fr;
+  }
+}
