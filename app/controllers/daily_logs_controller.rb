@@ -2,29 +2,10 @@ class DailyLogsController < ApplicationController
   before_action :authenticate_user!
 
   def show
-    @date = Date.iso8601(params[:date])
-    @daily_log = current_user.daily_logs.find_by(date: @date)
-    @learning_items = @daily_log&.learning_items&.includes(:category) || []
-    @categories = current_user.categories.order(:name)
-
+    load_daily_log
     respond_to do |format|
       format.html
-      format.json do
-        render json: {
-          date: @date,
-          has_record: @daily_log.present?,
-          insights: @daily_log&.insights,
-          learning_items: @learning_items.map { |item|
-            {
-              id: item.id,
-              category_name: item.category&.name,
-              summary: item.summary,
-              duration_minutes: item.duration_minutes,
-              lock_version: item.lock_version
-            }
-          }
-        }
-      end
+      format.json { render json: daily_log_json }
     end
   rescue ArgumentError
     render plain: 'Invalid date', status: :bad_request
@@ -76,6 +57,32 @@ class DailyLogsController < ApplicationController
     {
       body: item.summary,
       category: item.category&.name
+    }
+  end
+
+  def load_daily_log
+    @date = Date.iso8601(params[:date])
+    @daily_log = current_user.daily_logs.find_by(date: @date)
+    @learning_items = @daily_log&.learning_items&.includes(:category) || []
+    @categories = current_user.categories.order(:name)
+  end
+
+  def daily_log_json
+    {
+      date: @date,
+      has_record: @daily_log.present?,
+      insights: @daily_log&.insights,
+      learning_items: @learning_items.map { |item| learning_item_detail(item) }
+    }
+  end
+
+  def learning_item_detail(item)
+    {
+      id: item.id,
+      category_name: item.category&.name,
+      summary: item.summary,
+      duration_minutes: item.duration_minutes,
+      lock_version: item.lock_version
     }
   end
 

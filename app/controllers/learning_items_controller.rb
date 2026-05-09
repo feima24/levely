@@ -6,14 +6,7 @@ class LearningItemsController < ApplicationController
     @item = build_learning_item(date)
 
     if @item.save
-      render json: {
-        id: @item.id,
-        lock_version: @item.lock_version,
-        client_uuid: @item.client_uuid,
-        summary: @item.summary,
-        category_name: @item.category&.name,
-        duration_minutes: @item.duration_minutes
-      }, status: :created
+      render json: created_item_json, status: :created
     else
       render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
     end
@@ -43,6 +36,17 @@ class LearningItemsController < ApplicationController
   end
 
   private
+
+  def created_item_json
+    {
+      id: @item.id,
+      lock_version: @item.lock_version,
+      client_uuid: @item.client_uuid,
+      summary: @item.summary,
+      category_name: @item.category&.name,
+      duration_minutes: @item.duration_minutes
+    }
+  end
 
   def find_item
     LearningItem
@@ -81,6 +85,7 @@ class LearningItemsController < ApplicationController
 
   def find_or_create_category(name)
     return nil if name.blank?
+
     normalized = name.to_s.strip.downcase.gsub(/\s+/, ' ')
     current_user.categories.find_or_initialize_by(normalized_name: normalized).tap do |cat|
       cat.name ||= name.strip
