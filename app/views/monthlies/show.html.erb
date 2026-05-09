@@ -19,7 +19,17 @@
        } }
      }.to_json %>">
 
-  <%# ===== メインレイアウト ===== %>
+  <%# ===== 現在のステータス(連続投稿) ===== %>
+  <div class="current-stats">
+    <span class="streak-bars">
+      <span class="streak-bar"></span>
+      <span class="streak-bar"></span>
+      <span class="streak-bar"></span>
+    </span>
+    <span class="stat-streak-text"><strong><%= @streak_count %></strong>日連続投稿達成中！</span>
+  </div>
+
+  <%# ===== 月間カレンダー ===== %>
   <div class="monthly-layout rpg-window">
     <div class="monthly-nav">
       <%= link_to '<', monthly_path((@month << 1).strftime('%Y-%m')), class: 'monthly-nav-btn' %>
@@ -28,7 +38,6 @@
     </div>
 
     <div class="monthly-grid">
-      <%# 左: カレンダー %>
       <div class="monthly-calendar">
         <table>
           <thead>
@@ -49,10 +58,10 @@
                       <% if day > Time.zone.today %>
                         <span class="day-number"><%= day.day %></span>
                       <% else %>
-                        <%= link_to day.day, daily_log_path(day), class: 'day-number' %>
+                        <span class="day-number" data-action="click->calendar#select"
+                              data-date="<%= day %>"><%= day.day %></span>
                         <% unless @calendar_data[day].nil? %>
                           <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"
-                               data-calendar-target="dot"
                                data-dot-date="<%= day %>"></div>
                         <% end %>
                       <% end %>
@@ -65,50 +74,48 @@
         </table>
       </div>
 
-      <%# 右: 日報プレビュー %>
       <div class="monthly-panel" data-calendar-target="panel">
         <div data-calendar-target="panelContent">
-          <div class="panel-date-header"><%= @today.strftime('%Y/%m/%d') %></div>
-          <% if @today_items.any? %>
-            <div class="panel-items">
-              <% @today_items.each do |item| %>
-                <div class="panel-item">
-                  <span class="panel-item-badge"><%= item.category&.name || '未分類' %></span>
-                  <span class="panel-item-summary"><%= item.summary %></span>
-                  <% if item.duration_minutes %>
-                    <span class="panel-item-duration"><%= item.duration_minutes %>分</span>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-            <%= link_to '編集する', daily_log_path(@today), class: 'panel-edit-btn' %>
+          <% if @month.year == @today.year && @month.month == @today.month %>
+            <div class="panel-date-header"><%= @today.strftime('%Y/%m/%d') %></div>
+            <% if @today_items.any? %>
+              <div class="panel-items">
+                <% @today_items.each do |item| %>
+                  <div class="panel-item">
+                    <span class="panel-item-badge"><%= item.category&.name || '未分類' %></span>
+                    <span class="panel-item-summary"><%= item.summary %></span>
+                    <% if item.duration_minutes %>
+                      <span class="panel-item-duration"><%= item.duration_minutes %>分</span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              <button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>
+            <% else %>
+              <p class="panel-empty">記録がありません</p>
+              <button class="panel-edit-btn" data-action="click->calendar#openModal">＋ 記録を作成する</button>
+            <% end %>
+          <% elsif @month > @today %>
+            <p class="panel-empty">まだ記録がありません</p>
           <% else %>
-            <p class="panel-empty">記録がありません</p>
-            <%= link_to '＋ 記録を作成する', daily_log_path(@today), class: 'panel-edit-btn' %>
+            <p class="panel-empty">日付をクリックしてください</p>
           <% end %>
         </div>
       </div>
     </div>
   </div>
 
-  <%# ===== 月間サマリー ===== %>
+  <%# ===== 月間レポート ===== %>
   <div class="monthly-summary-section rpg-window">
+    <h3 class="summary-title"><%= @month.strftime('%-m月') %>のレポート</h3>
     <div class="summary-cards">
       <div class="summary-card">
-        <span class="summary-card-label">連続投稿</span>
-        <span class="summary-card-value"><%= @streak_count %><small>日</small></span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-card-label">今週</span>
-        <span class="summary-card-value"><%= @weekly_minutes / 60 %><small>時間</small> <%= @weekly_minutes % 60 %><small>分</small></span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-card-label">今月</span>
+        <span class="summary-card-label">月間合計</span>
         <span class="summary-card-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
       </div>
     </div>
     <div class="summary-category">
-      <h3 class="section-heading">カテゴリ別</h3>
+      <h3 class="section-heading">カテゴリー別学習時間</h3>
       <div class="donut-wrapper">
         <div class="donut-chart" data-calendar-target="donutChart"></div>
         <div class="donut-legend" data-calendar-target="donutLegend">
@@ -120,7 +127,7 @@
     </div>
   </div>
 
-  <%# ===== モーダル（Step 2で利用）===== %>
+  <%# ===== モーダル ===== %>
   <div class="modal-overlay" data-calendar-target="modal" style="display:none;">
     <div class="modal-content rpg-window">
       <div class="modal-header">

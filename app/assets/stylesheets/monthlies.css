@@ -29,6 +29,39 @@
   gap: 1.5rem;
 }
 
+/* ===== ステータス ===== */
+.current-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.streak-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.streak-bar {
+  width: 4px;
+  background: var(--rpg-accent);
+}
+
+.streak-bar:nth-child(1) { height: 6px; }
+.streak-bar:nth-child(2) { height: 10px; }
+.streak-bar:nth-child(3) { height: 14px; }
+
+.stat-streak-text {
+  font-size: 0.9rem;
+  color: var(--rpg-text);
+}
+
+.stat-streak-text strong {
+  color: var(--rpg-accent);
+  font-size: 1.1rem;
+}
+
 /* ===== カレンダー ===== */
 .monthly-calendar table {
   width: 100%;
@@ -182,6 +215,12 @@
 /* ===== 月間サマリー ===== */
 .monthly-summary-section {
   margin-top: 0.8rem;
+}
+
+.summary-title {
+  font-size: 0.9rem;
+  color: var(--rpg-accent);
+  margin: 0 0 0.5rem 0;
 }
 
 .summary-cards {
