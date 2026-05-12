@@ -11,8 +11,7 @@ export default class extends Controller {
     "modalStatus",
     "insightsInput",
     "rowTemplate",
-    "donutChart",
-    "donutLegend",
+
     "insightsText",
     "moreBtn",
   ];
@@ -30,7 +29,7 @@ export default class extends Controller {
 
   connect() {
     this._deletedItemIds = [];
-    this._renderDonut();
+    this._buildCategoryColors();
     document.addEventListener("keydown", this._handleKeydown);
 
     const todayMonth = this.todayValue.slice(0, 7);
@@ -276,8 +275,8 @@ export default class extends Controller {
     }
   }
 
-  // ===== ドーナツチャート =====
-  _renderDonut() {
+  // ===== カテゴリーカラー =====
+  _buildCategoryColors() {
     const totals = this.categoryTotalsValue;
     const colors = [
       "#ffd700",
@@ -289,38 +288,10 @@ export default class extends Controller {
       "#26a69a",
       "#ef5350",
     ];
-
     this._categoryColors = {};
     (totals || []).forEach((t, i) => {
       this._categoryColors[t.name] = colors[i % colors.length];
     });
-
-    if (!totals || totals.length === 0) return;
-
-    const total = totals.reduce((sum, t) => sum + t.minutes, 0);
-    if (total === 0) return;
-
-    let current = 0;
-    const segments = totals.map((t, i) => {
-      const pct = (t.minutes / total) * 100;
-      const seg = `${colors[i % colors.length]} ${current}% ${current + pct}%`;
-      current += pct;
-      return seg;
-    });
-    this.donutChartTarget.style.background = `conic-gradient(${segments.join(", ")})`;
-
-    this.donutLegendTarget.innerHTML = totals
-      .map((t, i) => {
-        const h = Math.floor(t.minutes / 60);
-        const m = t.minutes % 60;
-        const time = h > 0 ? `${h}時間${m}分` : `${m}分`;
-        return `<div class="donut-legend-item">
-        <span class="donut-legend-color" style="background:${colors[i % colors.length]}"></span>
-        <span>${this._esc(t.name)}</span>
-        <span class="donut-legend-minutes">${time}</span>
-      </div>`;
-      })
-      .join("");
   }
 
   // ===== ドット更新 =====

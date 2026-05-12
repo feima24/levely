@@ -17,6 +17,7 @@ class MonthliesController < ApplicationController
 
     @calendar_data = build_calendar_data(daily_logs)
     @category_totals = build_category_totals(daily_logs)
+    @weekly_totals = build_weekly_totals(daily_logs)
 
     colors = %w[#ffd700 #4caf50 #ff6b6b #87ceeb #ff9800 #ab47bc #26a69a #ef5350]
     @category_color_map = @category_totals.each_with_index.to_h { |(cat, _), i| [cat&.name, colors[i % colors.length]] }
@@ -38,6 +39,27 @@ class MonthliesController < ApplicationController
   def build_calendar_data(daily_logs)
     daily_logs.to_h do |log|
       [log.date, log.learning_items.sum { |i| i.duration_minutes.to_i }]
+    end
+  end
+
+  def build_weekly_totals(daily_logs)
+    month_start = @month.beginning_of_month
+    month_end = @month.end_of_month
+    first_monday = month_start.beginning_of_week(:monday)
+    last_sunday = month_end.end_of_week(:monday)
+
+    logs_by_date = daily_logs.index_by(&:date)
+
+    (first_monday..last_sunday).each_slice(7).filter_map do |week|
+      days = week.select { |d| d.month == @month.month }
+      next if days.empty?
+
+      minutes = days.sum do |d|
+        log = logs_by_date[d]
+        log ? log.learning_items.sum { |i| i.duration_minutes.to_i } : 0
+      end
+
+      { start_day: days.first.day, end_day: days.last.day, minutes: minutes }
     end
   end
 
