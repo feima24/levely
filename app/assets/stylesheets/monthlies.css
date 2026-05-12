@@ -253,110 +253,137 @@
 }
 @keyframes blink { 50% { opacity: 0.4; } }
 
-/* ===== 月間サマリー ===== */
-.monthly-summary-section {
-  margin-top: 0.8rem;
-}
-
+/* ===== レポートタイトル ===== */
 .summary-title {
   font-size: 0.9rem;
-  color: var(--rpg-accent);
+  color: var(--rpg-text);
   margin: 0 0 0.5rem 0;
 }
 
-.summary-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+/* ===== 月間合計 ===== */
+.monthly-summary-section {
+  margin-top: 0.8rem;
+  max-width: 550px;
 }
 
-.summary-card {
-  text-align: center;
-  padding: 0.4rem;
+.summary-total-section {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
 }
 
-.summary-card-label {
-  display: block;
-  font-size: 0.65rem;
-  color: var(--rpg-muted);
-  margin-bottom: 0.15rem;
+.summary-total-section .section-heading {
+  margin-left: -1.5rem;
 }
 
-.summary-card-value {
-  font-size: 1rem;
-  color: var(--rpg-accent);
+.summary-total-value {
+  font-size: 1.2rem;
+  color: var(--rpg-text);
 }
-.summary-card-value small {
+.summary-total-value small {
   font-size: 0.7rem;
   color: var(--rpg-muted);
   margin: 0 0.1rem;
 }
 
-/* ===== カテゴリ別 ===== */
-.summary-category {
-  padding-top: 0.5rem;
-}
-
-.section-heading {
-  font-size: 0.8rem;
-  color: var(--rpg-text);
-  margin: 0 0 0.4rem 0;
-}
-
-.donut-wrapper {
+.summary-total-bar {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+.summary-total-segment {
+  height: 100%;
 }
 
-.donut-chart {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: conic-gradient(var(--rpg-muted) 0% 100%);
-  position: relative;
-  flex-shrink: 0;
-}
-.donut-chart::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--rpg-panel);
-}
-
-.donut-legend {
+/* ===== カテゴリ凡例 ===== */
+.summary-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem 0.8rem;
+  margin-top: 0.4rem;
   font-size: 0.75rem;
 }
 
-.donut-legend-item {
+.summary-legend-item {
   display: flex;
   align-items: center;
   gap: 0.3rem;
   color: var(--rpg-text);
 }
 
-.donut-legend-color {
+.summary-legend-color {
   width: 10px;
   height: 10px;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
-.donut-legend-minutes {
+.summary-legend-minutes {
+  color: var(--rpg-muted);
+  font-size: 0.7rem;
+}
+
+/* ===== 週ごと横バー ===== */
+.summary-weekly {
+  padding-top: 0.5rem;
+}
+
+.weekly-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.weekly-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weekly-row-label {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  text-align: right;
+}
+
+.weekly-row-track {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.weekly-row-fill {
+  height: 100%;
+  background: var(--rpg-accent);
+  border-radius: 2px;
+  min-width: 0;
+}
+
+.weekly-row-value {
+  font-size: 0.7rem;
   color: var(--rpg-text);
-  font-size: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(74, 122, 181, 0.3);
-  border-radius: 3px;
-  padding: 0.1rem 0.3rem;
+  text-align: right;
+  }
+
+.weekly-row-value small {
+  font-size: 0.55rem;
+  color: var(--rpg-muted);
+  margin: 0 0.1rem;
+}
+
+.section-heading {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.section-icon {
+  color: var(--rpg-accent);
+  font-size: 0.6rem;
+  margin-right: 0.3rem;
 }
 
 /* ===== モーダル ===== */
@@ -533,7 +560,6 @@
 
 .panel-insights--open {
   display: block;
-  -webkit-line-clamp: unset;
   max-height: none;
   overflow-y: visible;
 }
@@ -564,4 +590,11 @@
 .modal-view-summary {
   flex: 1;
   color: var(--rpg-text);
+}
+
+/* ===== ピクセルアイコン ===== */
+.pixel-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.4rem;
 }

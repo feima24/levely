@@ -20,14 +20,10 @@
      }.to_json %>">
 
   <%# ===== 現在のステータス(連続投稿) ===== %>
-  <div class="current-stats">
-    <span class="streak-bars">
-      <span class="streak-bar"></span>
-      <span class="streak-bar"></span>
-      <span class="streak-bar"></span>
-    </span>
-    <span class="stat-streak-text"><strong><%= @streak_count %></strong>日連続投稿達成中！</span>
-  </div>
+<div class="current-stats">
+  <%= render 'shared/icons/flame' %>
+  <span class="stat-streak-text"><strong><%= @streak_count %></strong>日連続投稿達成中！</span>
+</div>
 
   <%# ===== 月間カレンダー ===== %>
   <div class="monthly-layout rpg-window">
@@ -100,7 +96,7 @@
               <% if @today_log&.insights.present? %>
                 <div class="panel-insights-label">気づき</div>
                 <div class="panel-insights" data-calendar-target="insightsText"><%= @today_log.insights %></div>
-                <button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">∨ もっと見る</button>
+                <button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">▾ もっと見る</button>
               <% end %>
               <button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>
             <% else %>
@@ -117,27 +113,61 @@
     </div>
   </div>
 
-  <%# ===== 月間レポート ===== %>
-  <div class="monthly-summary-section rpg-window">
-    <h3 class="summary-title"><%= @month.strftime('%-m月') %>のレポート</h3>
-    <div class="summary-cards">
-      <div class="summary-card">
-        <span class="summary-card-label">月間合計</span>
-        <span class="summary-card-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
-      </div>
+<%# ===== 月間レポート ===== %>
+<div class="monthly-summary-section rpg-window">
+  <h3 class="summary-title"><%= @month.strftime('%-m月') %>のレポート</h3>
+
+  <div class="summary-total-section">
+    <h3 class="section-heading">
+      <span class="pixel-icon"><%= render 'shared/icons/trophy' %></span>
+      <span>Monthly EXP</span>
+    </h3>
+    <span class="summary-total-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
+    <div class="summary-total-bar">
+      <% if @monthly_total_minutes > 0 %>
+        <% @category_totals.each do |cat, minutes| %>
+          <div class="summary-total-segment" style="width: <%= (minutes.to_f / @monthly_total_minutes * 100).round(1) %>%; background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></div>
+        <% end %>
+      <% end %>
     </div>
-    <div class="summary-category">
-      <h3 class="section-heading">カテゴリー別学習時間</h3>
-      <div class="donut-wrapper">
-        <div class="donut-chart" data-calendar-target="donutChart"></div>
-        <div class="donut-legend" data-calendar-target="donutLegend">
-          <% if @category_totals.empty? %>
-            <p class="panel-empty">記録なし</p>
-          <% end %>
+    <div class="summary-legend">
+      <% @category_totals.each do |cat, minutes| %>
+        <div class="summary-legend-item">
+          <span class="summary-legend-color" style="background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></span>
+          <span><%= cat&.name || '未分類' %></span>
+          <span class="summary-legend-minutes"><%= minutes / 60 > 0 ? "#{minutes / 60}時間#{minutes % 60}分" : "#{minutes}分" %></span>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
+
+  <div class="summary-weekly">
+    <h3 class="section-heading">
+      <span class="pixel-icon"><%= render 'shared/icons/sword' %></span>
+      <span>Weekly EXP</span>
+    </h3>
+    <% max_minutes = @weekly_totals.map { |w| w[:minutes] }.max || 0 %>
+    <div class="weekly-bars">
+      <% @weekly_totals.each do |week| %>
+        <div class="weekly-row">
+          <span class="weekly-row-label"><%= week[:start_day] %>-<%= week[:end_day] %>日</span>
+          <div class="weekly-row-track">
+            <div class="weekly-row-fill" style="width: <%= max_minutes > 0 ? (week[:minutes].to_f / max_minutes * 100).round : 0 %>%"></div>
+          </div>
+          <span class="weekly-row-value">
+            <% if week[:minutes] >= 60 %>
+              <%= week[:minutes] / 60 %><small>h</small> <%= week[:minutes] % 60 %><small>m</small>
+            <% elsif week[:minutes] > 0 %>
+              <%= week[:minutes] %><small>m</small>
+            <% else %>
+              -
+            <% end %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
   <%# ===== モーダル ===== %>
   <div class="modal-overlay" data-calendar-target="modal" style="display:none;">
