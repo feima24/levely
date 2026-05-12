@@ -31,13 +31,12 @@
 
   <%# ===== 月間カレンダー ===== %>
   <div class="monthly-layout rpg-window">
-    <div class="monthly-nav">
+    <div class="monthly-grid">
+      <div class="monthly-nav">
       <%= link_to '<', monthly_path((@month << 1).strftime('%Y-%m')), class: 'monthly-nav-btn' %>
       <span class="monthly-title"><%= @month.strftime('%Y年%-m月') %></span>
       <%= link_to '>', monthly_path((@month >> 1).strftime('%Y-%m')), class: 'monthly-nav-btn' %>
     </div>
-
-    <div class="monthly-grid">
       <div class="monthly-calendar">
         <table>
           <thead>
@@ -78,18 +77,31 @@
         <div data-calendar-target="panelContent">
           <% if @month.year == @today.year && @month.month == @today.month %>
             <div class="panel-date-header"><%= @today.strftime('%Y/%m/%d') %></div>
-            <% if @today_items.any? %>
-              <div class="panel-items">
-                <% @today_items.each do |item| %>
-                  <div class="panel-item">
-                    <span class="panel-item-badge"><%= item.category&.name || '未分類' %></span>
-                    <span class="panel-item-summary"><%= item.summary %></span>
-                    <% if item.duration_minutes %>
-                      <span class="panel-item-duration"><%= item.duration_minutes %>分</span>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
+            <% if @today_items.any? || @today_log&.insights.present? %>
+              <% if @today_items.any? %>
+                <div class="panel-items">
+                  <% @today_items.each do |item| %>
+                    <div class="panel-item">
+                      <div class="panel-item-header">
+                        <span class="panel-item-color" style="background:<%= @category_color_map[item.category&.name] || '#ffd700' %>"></span>
+                        <span class="panel-item-category"><%= item.category&.name || '未分類' %></span>
+                        <% if item.duration_minutes %>
+                          <% h = item.duration_minutes / 60; m = item.duration_minutes % 60 %>
+                          <span class="panel-item-duration"><%= h > 0 ? "#{h}時間#{m}分" : "#{m}分" %></span>
+                        <% end %>
+                      </div>
+                      <% if item.summary.present? %>
+                        <div class="panel-item-summary"><%= item.summary %></div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              <% if @today_log&.insights.present? %>
+                <div class="panel-insights-label">気づき</div>
+                <div class="panel-insights" data-calendar-target="insightsText"><%= @today_log.insights %></div>
+                <button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">∨ もっと見る</button>
+              <% end %>
               <button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>
             <% else %>
               <p class="panel-empty">記録がありません</p>
@@ -135,27 +147,47 @@
         <button class="modal-close" data-action="click->calendar#closeModal">✕</button>
       </div>
       <div class="modal-body">
-        <label class="modal-label">ふりかえり</label>
-        <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="3"></textarea>
-        <label class="modal-label">学習項目</label>
         <div data-calendar-target="modalRows"></div>
-        <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 行を追加</button>
+        <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 学習記録を追加</button>
+        <label class="modal-label">気づき</label>
+        <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="19"></textarea>
       </div>
       <div class="modal-footer">
         <span data-calendar-target="modalStatus"></span>
-        <button class="modal-save-btn" data-action="click->calendar#saveModal">保存</button>
+        <button class="modal-save-btn" data-action="click->calendar#saveModal">保存する</button>
       </div>
     </div>
   </div>
 
-  <template id="modal-row-template" data-calendar-target="rowTemplate">
-    <div class="modal-row" data-item-id="" data-lock-version="0">
-      <input type="text" class="modal-input" data-field="category_name" list="category-list" placeholder="カテゴリ">
-      <textarea class="modal-input" data-field="summary" rows="2" placeholder="学んだこと"></textarea>
-      <input type="number" class="modal-input modal-input-minutes" data-field="duration_minutes" min="1" placeholder="分">
-      <button class="modal-row-delete" data-action="click->calendar#removeModalRow">✕</button>
+<template id="modal-row-template" data-calendar-target="rowTemplate">
+  <div class="modal-row" data-item-id="" data-lock-version="0">
+    <div class="modal-field">
+      <label class="modal-field-label">カテゴリ</label>
+      <input type="text" class="modal-input" data-field="category_name" list="category-list">
     </div>
-  </template>
+    <div class="modal-field modal-field--summary">
+      <label class="modal-field-label">概要</label>
+      <input type="text" class="modal-input" data-field="summary">
+    </div>
+    <div class="modal-duration">
+      <select class="modal-select" data-field="duration_hours">
+        <option value="">-</option>
+        <% (0..24).each do |h| %>
+          <option value="<%= h %>"><%= h %></option>
+        <% end %>
+      </select>
+      <span class="modal-duration-label">時間</span>
+      <select class="modal-select" data-field="duration_minutes_part">
+        <option value="">-</option>
+        <% (0..55).step(5).each do |m| %>
+          <option value="<%= m %>"><%= m %></option>
+        <% end %>
+      </select>
+      <span class="modal-duration-label">分</span>
+    </div>
+    <button class="modal-row-delete" data-action="click->calendar#removeModalRow">✕</button>
+  </div>
+</template>
 
   <datalist id="category-list">
     <% @categories.each do |cat| %>

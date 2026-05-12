@@ -17,6 +17,9 @@ class MonthliesController < ApplicationController
 
     @calendar_data = build_calendar_data(daily_logs)
     @category_totals = build_category_totals(daily_logs)
+
+    colors = %w[#ffd700 #4caf50 #ff6b6b #87ceeb #ff9800 #ab47bc #26a69a #ef5350]
+    @category_color_map = @category_totals.each_with_index.to_h { |(cat, _), i| [cat&.name, colors[i % colors.length]] }
   end
 
   def load_stats

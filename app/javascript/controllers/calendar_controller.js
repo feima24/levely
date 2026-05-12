@@ -3,7 +3,6 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = [
     "cell",
-    "dot",
     "panel",
     "panelContent",
     "modal",
@@ -14,6 +13,8 @@ export default class extends Controller {
     "rowTemplate",
     "donutChart",
     "donutLegend",
+    "insightsText",
+    "moreBtn",
   ];
 
   static values = {
@@ -81,23 +82,44 @@ export default class extends Controller {
   }
 
   // ===== パネル描画 =====
-
   _renderPanel(data) {
     const items = data.learning_items || [];
+    const insights = data.insights || "";
+    const hasContent = items.length > 0 || insights;
     let html = `<div class="panel-date-header">${this._formatDate(this._selectedDate)}</div>`;
 
     if (items.length > 0) {
       html += '<div class="panel-items">';
       for (const item of items) {
         html += '<div class="panel-item">';
-        html += `<span class="panel-item-badge">${this._esc(item.category_name || "未分類")}</span>`;
-        html += `<span class="panel-item-summary">${this._esc(item.summary || "")}</span>`;
+        html += '<div class="panel-item-header">';
+        // カテゴリカラー
+        const color = this._categoryColors[item.category_name] || "#ffd700";
+        html += `<span class="panel-item-color" style="background:${color}"></span>`;
+        html += `<span class="panel-item-category">${this._esc(item.category_name || "未分類")}</span>`;
         if (item.duration_minutes) {
-          html += `<span class="panel-item-duration">${item.duration_minutes}分</span>`;
+          const h = Math.floor(item.duration_minutes / 60);
+          const m = item.duration_minutes % 60;
+          const time = h > 0 ? `${h}時間${m}分` : `${m}分`;
+          html += `<span class="panel-item-duration">${time}</span>`;
+        }
+        html += "</div>";
+        if (item.summary) {
+          html += `<div class="panel-item-summary">${this._esc(item.summary)}</div>`;
         }
         html += "</div>";
       }
       html += "</div>";
+    }
+
+    if (insights) {
+      html += '<div class="panel-insights-label">気づき</div>';
+      html += `<div class="panel-insights" data-calendar-target="insightsText">${this._esc(insights)}</div>`;
+      html +=
+        '<button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">▼ もっと見る</button>';
+    }
+
+    if (hasContent) {
       html +=
         '<button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>';
     } else {
@@ -107,6 +129,27 @@ export default class extends Controller {
     }
 
     this.panelContentTarget.innerHTML = html;
+
+    requestAnimationFrame(() => {
+      if (this.hasInsightsTextTarget && this.hasMoreBtnTarget) {
+        const el = this.insightsTextTarget;
+        if (el.scrollHeight > el.clientHeight) {
+          this.moreBtnTarget.style.display = "block";
+        }
+      }
+    });
+  }
+
+  toggleInsights() {
+    const el = this.insightsTextTarget;
+    const btn = this.moreBtnTarget;
+    if (el.classList.contains("panel-insights--open")) {
+      el.classList.remove("panel-insights--open");
+      btn.textContent = "▼ もっと見る";
+    } else {
+      el.classList.add("panel-insights--open");
+      btn.textContent = "▲ 閉じる";
+    }
   }
 
   _setPanelLoading() {
@@ -115,14 +158,17 @@ export default class extends Controller {
   }
 
   // ===== モーダル =====
-
   openModal() {
+    this.insightsInputTarget.readOnly = false;
+    this.modalTarget.dataset.viewMode = "";
     this._deletedItemIds = [];
     this._populateModal(this._currentData || { learning_items: [] });
     this.modalTarget.style.display = "flex";
   }
 
   closeModal() {
+    this.insightsInputTarget.readOnly = false;
+    this.modalTarget.dataset.viewMode = "";
     this.modalTarget.style.display = "none";
     this._setModalStatus("");
   }
@@ -166,7 +212,8 @@ export default class extends Controller {
   }
 
   _populateModal(data) {
-    this.modalTitleTarget.textContent = this._formatDate(this._selectedDate);
+    this.modalTitleTarget.textContent =
+      this._formatDate(this._selectedDate) + "の記録";
     this.insightsInputTarget.value = data.insights || "";
     this.modalRowsTarget.innerHTML = "";
 
@@ -181,8 +228,12 @@ export default class extends Controller {
       if (item.id) catInput.readOnly = true;
 
       row.querySelector("[data-field='summary']").value = item.summary || "";
-      row.querySelector("[data-field='duration_minutes']").value =
-        item.duration_minutes || "";
+      if (item.duration_minutes) {
+        const h = Math.floor(item.duration_minutes / 60);
+        const m = Math.round((item.duration_minutes % 60) / 5) * 5;
+        row.querySelector("[data-field='duration_hours']").value = h;
+        row.querySelector("[data-field='duration_minutes_part']").value = m;
+      }
 
       this.modalRowsTarget.appendChild(clone);
     }
@@ -193,8 +244,13 @@ export default class extends Controller {
     const categoryName = row
       .querySelector("[data-field='category_name']")
       ?.value?.trim();
-    const duration =
-      row.querySelector("[data-field='duration_minutes']")?.value || null;
+    const hours =
+      parseInt(row.querySelector("[data-field='duration_hours']")?.value) || 0;
+    const mins =
+      parseInt(
+        row.querySelector("[data-field='duration_minutes_part']")?.value,
+      ) || 0;
+    const duration = hours * 60 + mins || null;
 
     if (!categoryName && !summary) return;
 
@@ -221,11 +277,8 @@ export default class extends Controller {
   }
 
   // ===== ドーナツチャート =====
-
   _renderDonut() {
     const totals = this.categoryTotalsValue;
-    if (!totals || totals.length === 0) return;
-
     const colors = [
       "#ffd700",
       "#4caf50",
@@ -236,6 +289,14 @@ export default class extends Controller {
       "#26a69a",
       "#ef5350",
     ];
+
+    this._categoryColors = {};
+    (totals || []).forEach((t, i) => {
+      this._categoryColors[t.name] = colors[i % colors.length];
+    });
+
+    if (!totals || totals.length === 0) return;
+
     const total = totals.reduce((sum, t) => sum + t.minutes, 0);
     if (total === 0) return;
 
@@ -252,7 +313,7 @@ export default class extends Controller {
       .map((t, i) => {
         const h = Math.floor(t.minutes / 60);
         const m = t.minutes % 60;
-        const time = h > 0 ? `${h}h${m}m` : `${m}m`;
+        const time = h > 0 ? `${h}時間${m}分` : `${m}分`;
         return `<div class="donut-legend-item">
         <span class="donut-legend-color" style="background:${colors[i % colors.length]}"></span>
         <span>${this._esc(t.name)}</span>
