@@ -43,23 +43,28 @@ class MonthliesController < ApplicationController
   end
 
   def build_weekly_totals(daily_logs)
-    month_start = @month.beginning_of_month
-    month_end = @month.end_of_month
-    first_monday = month_start.beginning_of_week(:monday)
-    last_sunday = month_end.end_of_week(:monday)
-
     logs_by_date = daily_logs.index_by(&:date)
+
+    weekly_date_ranges.filter_map do |days|
+      minutes = sum_minutes(days, logs_by_date)
+      { start_day: days.first.day, end_day: days.last.day, minutes: minutes }
+    end
+  end
+
+  def weekly_date_ranges
+    first_monday = @month.beginning_of_month.beginning_of_week(:monday)
+    last_sunday = @month.end_of_month.end_of_week(:monday)
 
     (first_monday..last_sunday).each_slice(7).filter_map do |week|
       days = week.select { |d| d.month == @month.month }
-      next if days.empty?
+      days.presence
+    end
+  end
 
-      minutes = days.sum do |d|
-        log = logs_by_date[d]
-        log ? log.learning_items.sum { |i| i.duration_minutes.to_i } : 0
-      end
-
-      { start_day: days.first.day, end_day: days.last.day, minutes: minutes }
+  def sum_minutes(days, logs_by_date)
+    days.sum do |d|
+      log = logs_by_date[d]
+      log ? log.learning_items.sum { |i| i.duration_minutes.to_i } : 0
     end
   end
 
