@@ -59,10 +59,11 @@
 }
 
 .nav-icon {
-  width: 1.2em;
-  text-align: center;
-  display: inline-block;
-  filter: brightness(3);
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 nav-item svg {

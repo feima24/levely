@@ -1,60 +1,600 @@
-.monthly-header {
+/* ===== 月ナビ ===== */
+.monthly-nav {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.5rem 0;
 }
 
-.monthly-layout {
+.monthly-title {
+  font-size: 1.1rem;
+  color: var(--rpg-text);
+  font-weight: bold;
+}
+
+.monthly-nav-btn {
+  color: var(--rpg-muted);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+.monthly-nav-btn:hover {
+  color: var(--rpg-accent);
+}
+
+/* ===== メインレイアウト ===== */
+.monthly-grid {
   display: grid;
-  grid-template-columns: 2fr 220px;
-  gap: 1.5rem;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .monthly-layout { grid-template-columns: 1fr; }
+/* ===== ステータス ===== */
+.current-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-/* カレンダーテーブル */
-.monthly-calendar table { width: 100%; border-collapse: collapse; }
+.streak-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.streak-bar {
+  width: 4px;
+  background: var(--rpg-accent);
+}
+
+.streak-bar:nth-child(1) { height: 6px; }
+.streak-bar:nth-child(2) { height: 10px; }
+.streak-bar:nth-child(3) { height: 14px; }
+
+.stat-streak-text {
+  font-size: 0.9rem;
+  color: var(--rpg-text);
+}
+
+.stat-streak-text strong {
+  color: var(--rpg-accent);
+  font-size: 1.1rem;
+}
+
+/* ===== カレンダー ===== */
+.monthly-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .monthly-calendar th {
   color: var(--rpg-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   padding: 0.3rem;
   text-align: center;
+  font-weight: normal;
 }
+
 .monthly-calendar td {
-  border: 1px solid #1e3050;
-  min-height: 60px;
-  padding: 0.5rem;
+  padding: 0.4rem;
   text-align: center;
   vertical-align: top;
   font-size: 0.85rem;
 }
 
+/* 日付番号 */
 .day-number {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   color: var(--rpg-text);
   text-decoration: none;
   font-size: 0.85rem;
+  transition: background-color 0.15s;
 }
-.day-number:hover { color: var(--rpg-accent); }
+.day-number:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--rpg-text);
+}
+
+/* 今日: アクセントカラーの丸 */
+.today .day-number {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+  font-weight: bold;
+}
+.today .day-number:hover {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+}
+
+/* 選択中（Step 2で使用） */
+.selected .day-number {
+  background-color: rgba(255, 215, 0, 0.2);
+  color: var(--rpg-accent);
+}
+.today.selected .day-number {
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+}
 
 /* セル状態 */
-.future      { opacity: 0.3; pointer-events: none; }
-.today       { background-color: #1e3a5f; border: 2px solid var(--rpg-accent) !important; }
-.today .day-number { color: var(--rpg-accent); }
-.other-month { visibility: hidden; }
+.future       { opacity: 0.3; pointer-events: none; }
+.other-month  { visibility: hidden; }
 
-/* 曜日 */
+/* 曜日色 */
 .sunday   { color: #ff6b6b; }
 .saturday { color: #87ceeb; }
 
-/* 学習強度ドット */
-.dot          { width: 8px; height: 8px; border-radius: 50%; margin: 2px auto; }
+/* 学習ドット */
+.dot          { width: 6px; height: 6px; border-radius: 50%; margin: 2px auto 0; }
 .dot--weak    { background-color: var(--rpg-success); }
 .dot--strong  { background-color: var(--rpg-strong); }
 
-/* サマリー */
-.category-totals { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.category-totals td { padding: 0.3rem 0.5rem; border-bottom: 1px solid #1e3050; }
+/* ===== 右パネル ===== */
+.monthly-panel {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  padding-left: 1.5rem;
+}
+
+.panel-date-header {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--rpg-text);
+  margin-bottom: 0.8rem;
+  padding-top: 0.5rem;
+}
+
+.panel-items {
+  margin-bottom: 0.8rem;
+}
+
+.panel-item {
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(74, 122, 181, 0.15);
+}
+
+.panel-item:last-child {
+  border-bottom: none;
+}
+
+.panel-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panel-item-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.panel-item-category {
+  color: var(--rpg-text);
+  font-size: 0.8rem;
+}
+
+.panel-item-summary {
+  color: var(--rpg-text);
+  font-size: 0.75rem;
+  padding-left: 0.3rem;
+  margin-top: 0.2rem;
+}
+
+.panel-item-duration {
+  color: var(--rpg-text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-left: auto;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid rgba(74, 122, 181, 0.3);
+}
+
+.panel-more-btn {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  text-align: center;
+}
+.panel-more-btn:hover {
+  color: var(--rpg-accent);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.panel-edit-btn {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  background-color: var(--rpg-accent);
+  color: var(--rpg-bg);
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.85rem;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  margin-top: 0.8rem;
+}
+.panel-edit-btn:hover {
+  opacity: 0.85;
+}
+
+.panel-empty {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  padding: 0.5rem 0;
+}
+
+.panel-loading {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  animation: blink 1s infinite;
+}
+@keyframes blink { 50% { opacity: 0.4; } }
+
+/* ===== レポートタイトル ===== */
+.summary-title {
+  font-size: 0.9rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.5rem 0;
+}
+
+/* ===== 月間合計 ===== */
+.monthly-summary-section {
+  margin-top: 0.8rem;
+  max-width: 550px;
+}
+
+.summary-total-section {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.summary-total-section .section-heading {
+  margin-left: -1.5rem;
+}
+
+.summary-total-value {
+  font-size: 1.2rem;
+  color: var(--rpg-text);
+}
+.summary-total-value small {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  margin: 0 0.1rem;
+}
+
+.summary-total-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+.summary-total-segment {
+  height: 100%;
+}
+
+/* ===== カテゴリ凡例 ===== */
+.summary-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.summary-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--rpg-text);
+}
+
+.summary-legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.summary-legend-minutes {
+  color: var(--rpg-muted);
+  font-size: 0.7rem;
+}
+
+/* ===== 週ごと横バー ===== */
+.summary-weekly {
+  padding-top: 0.5rem;
+}
+
+.weekly-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.weekly-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weekly-row-label {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  text-align: right;
+}
+
+.weekly-row-track {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.weekly-row-fill {
+  height: 100%;
+  background: var(--rpg-accent);
+  border-radius: 2px;
+  min-width: 0;
+}
+
+.weekly-row-value {
+  font-size: 0.7rem;
+  color: var(--rpg-text);
+  text-align: right;
+  }
+
+.weekly-row-value small {
+  font-size: 0.55rem;
+  color: var(--rpg-muted);
+  margin: 0 0.1rem;
+}
+
+.section-heading {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.section-icon {
+  color: var(--rpg-accent);
+  font-size: 0.6rem;
+  margin-right: 0.3rem;
+}
+
+/* ===== モーダル ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 95%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--rpg-accent);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--rpg-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--rpg-danger); }
+
+.modal-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--rpg-muted);
+  margin-bottom: 0.3rem;
+}
+
+.modal-textarea {
+  width: 100%;
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  font-family: 'DotGothic16', monospace;
+  resize: vertical;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  min-height: 200px;
+}
+
+.modal-add-row {
+  background: none;
+  border: 1px dashed var(--rpg-border);
+  color: var(--rpg-muted);
+  width: 100%;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  margin-bottom: 0.5rem;
+}
+.modal-add-row:hover { color: var(--rpg-accent); border-color: var(--rpg-accent); }
+
+.modal-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.modal-field {
+  position: relative;
+}
+
+.modal-field-label {
+  position: absolute;
+  top: -0.5rem;
+  left: 0.4rem;
+  font-size: 0.6rem;
+  color: var(--rpg-muted);
+  background-color: var(--rpg-panel);
+  padding: 0 0.2rem;
+  z-index: 1;
+}
+
+.modal-input {
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.5rem 0.4rem;
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+}
+
+.modal-duration {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.modal-select {
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.3rem;
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  width: 50px;
+}
+
+.modal-duration-label {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+}
+
+.modal-row-delete {
+  background: none;
+  border: none;
+  color: var(--rpg-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.3rem;
+}
+.modal-row-delete:hover { color: var(--rpg-danger); }
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.modal-save-btn {
+  background-color: var(--rpg-accent);
+  border: none;
+  color: var(--rpg-bg);
+  padding: 0.6rem 2rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  width: 100%;
+}
+.modal-save-btn:hover { opacity: 0.85; }
+
+.panel-insights {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 18;
+  line-clamp: 18;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.panel-insights--open {
+  display: block;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.panel-insights-label {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  margin-top: 0.8rem;
+  margin-bottom: 0.2rem;
+  border-top: 1px solid rgba(74, 122, 181, 0.3);
+  padding-top: 0.5rem;
+}
+
+.modal-overlay[data-view-mode="true"] .modal-add-row,
+.modal-overlay[data-view-mode="true"] .modal-footer,
+.modal-overlay[data-view-mode="true"] .modal-row-delete {
+  display: none;
+}
+
+.modal-view-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.modal-view-summary {
+  flex: 1;
+  color: var(--rpg-text);
+}
+
+/* ===== ピクセルアイコン ===== */
+.pixel-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
