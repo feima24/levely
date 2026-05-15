@@ -202,6 +202,8 @@ export default class extends Controller {
         await this._saveRow(row, date);
       }
 
+      this._request(`/daily_logs/${date}/generate_embedding`, "POST");
+
       await this._fetchDate(date);
       this._updateDot(date);
       this.closeModal();

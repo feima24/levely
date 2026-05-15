@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :daily_logs, only: %i[show update], param: :date do
     member do
       post :find_related
+      post :generate_embedding
     end
   end
   resources :learning_items, only: %i[create update destroy]

@@ -30,7 +30,32 @@ class DailyLogsController < ApplicationController
     render json: { results: related_logs_json(related_logs) }
   end
 
+  def generate_embedding
+    @date = Date.iso8601(params[:date])
+    daily_log = current_user.daily_logs.find_by(date: @date)
+
+    if daily_log.nil? || daily_log_text(daily_log).blank?
+      daily_log&.daily_log_embedding&.destroy
+      render json: { success: true, skipped: true }
+      return
+    end
+
+    upsert_embedding(daily_log)
+    render json: { success: true }
+  end
+
   private
+
+  def upsert_embedding(daily_log)
+    vector = EmbeddingService.generate(daily_log_text(daily_log))
+    embedding = daily_log.daily_log_embedding || daily_log.build_daily_log_embedding
+    embedding.update!(embedding: vector, embedding_model: 'text-embedding-3-small')
+  end
+
+  def embedding_for(daily_log)
+    upsert_embedding(daily_log) unless daily_log.daily_log_embedding
+    daily_log.daily_log_embedding.embedding
+  end
 
   def related_logs_for(daily_log)
     embedding = embedding_for(daily_log)
@@ -86,13 +111,9 @@ class DailyLogsController < ApplicationController
     }
   end
 
-  def embedding_for(daily_log)
-    DailyLogEmbedding.find_or_create_by!(daily_log: daily_log) do |record|
-      record.embedding = EmbeddingService.generate(daily_log_text(daily_log))
-    end.embedding
-  end
-
   def daily_log_text(daily_log)
-    daily_log.learning_items.pluck(:summary).join("\n")
+    parts = daily_log.learning_items.pluck(:summary)
+    parts << daily_log.insights if daily_log.insights.present?
+    parts.join("\n")
   end
 end
