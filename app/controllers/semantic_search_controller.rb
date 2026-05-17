@@ -8,7 +8,9 @@ class SemanticSearchController < ApplicationController
       return
     end
 
-    render json: { results: search_results(query) }
+    results = search_results(query)
+    summary = SearchSummaryService.generate(query, results)
+    render json: { results: results, summary: summary }
   rescue StandardError => e
     Rails.logger.error("SemanticSearch error: #{e.message}")
     render json: { error: 'エラーが発生しました' }, status: :internal_server_error
@@ -17,7 +19,7 @@ class SemanticSearchController < ApplicationController
   private
 
   def search_results(query)
-    EmbeddingService.generate(query, input_type: 'search_query')
+    vector = EmbeddingService.generate(query, input_type: 'search_query')
     find_nearest_logs(vector).map { |log| format_log(log) }
   end
 
@@ -27,6 +29,7 @@ class SemanticSearchController < ApplicationController
       .where(daily_logs: { user_id: current_user.id })
       .nearest_neighbors(:embedding, vector, distance: 'cosine')
       .limit(10)
+      .select { |e| e.neighbor_distance < 0.5 }
       .map(&:daily_log)
   end
 

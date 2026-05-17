@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["panel", "input", "results", "status"];
+  static targets = ["panel", "input", "results", "status", "summary"];
 
   connect() {
     if (sessionStorage.getItem("searchDrawerOpen") === "true") {
@@ -16,6 +16,8 @@ export default class extends Controller {
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+
+    this._restoreResults();
   }
 
   toggle() {
@@ -81,11 +83,13 @@ export default class extends Controller {
     if (query.length < 2) {
       this.statusTarget.textContent = "2文字以上入力してください";
       this.resultsTarget.innerHTML = "";
+      this.summaryTarget.innerHTML = "";
       return;
     }
 
     this.statusTarget.textContent = "検索中...";
     this.resultsTarget.innerHTML = "";
+    this.summaryTarget.innerHTML = "";
 
     try {
       const response = await fetch("/semantic_search", {
@@ -110,12 +114,26 @@ export default class extends Controller {
       }
 
       this.statusTarget.textContent = `${data.results.length}件の結果`;
+
+      if (data.summary) {
+        this.summaryTarget.innerHTML = this.summaryCard(data.summary);
+      }
+
       this.resultsTarget.innerHTML = data.results
         .map((r) => this.resultCard(r))
         .join("");
+
+      this._saveResults(query, data);
     } catch {
       this.statusTarget.textContent = "通信エラーが発生しました";
     }
+  }
+
+  summaryCard(summary) {
+    return `<div class="search-summary-card">
+      <div class="search-summary-label">まとめ</div>
+      <div class="search-summary-text">${this.escapeHtml(summary)}</div>
+    </div>`;
   }
 
   resultCard(log) {
@@ -133,7 +151,7 @@ export default class extends Controller {
       ? `<div class="search-result-insights">${this.escapeHtml(log.insights)}</div>`
       : "";
 
-    return `<a href="/daily_logs/${this.escapeHtml(log.date)}" class="search-result-card">
+    return `<a href="/monthlies/${this.escapeHtml(log.date.substring(0, 7))}?date=${this.escapeHtml(log.date)}" class="search-result-card">
       <div class="search-result-date">${this.escapeHtml(log.date)}</div>
       ${items}${insights}
     </a>`;
@@ -146,5 +164,34 @@ export default class extends Controller {
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+  }
+
+  _saveResults(query, data) {
+    sessionStorage.setItem(
+      "searchDrawerState",
+      JSON.stringify({
+        query,
+        results: data.results,
+        summary: data.summary,
+        status: this.statusTarget.textContent,
+      }),
+    );
+  }
+
+  _restoreResults() {
+    const saved = sessionStorage.getItem("searchDrawerState");
+    if (!saved) return;
+
+    const { query, results, summary, status } = JSON.parse(saved);
+    this.inputTarget.value = query;
+    this.statusTarget.textContent = status;
+
+    if (summary) {
+      this.summaryTarget.innerHTML = this.summaryCard(summary);
+    }
+
+    this.resultsTarget.innerHTML = results
+      .map((r) => this.resultCard(r))
+      .join("");
   }
 }

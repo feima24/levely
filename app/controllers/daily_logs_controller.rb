@@ -4,7 +4,7 @@ class DailyLogsController < ApplicationController
   def show
     load_daily_log
     respond_to do |format|
-      format.html
+      format.html { redirect_to monthly_path(@date.strftime('%Y-%m')) }
       format.json { render json: daily_log_json }
     end
   rescue ArgumentError
