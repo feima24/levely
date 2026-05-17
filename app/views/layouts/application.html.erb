@@ -24,23 +24,23 @@
   <body>
     <% if notice %><p class="notice"><%= notice %></p><% end %>
     <% if user_signed_in? %>
-      <div class="app-layout">
-        <nav class="sidebar">
-          <div class="sidebar-logo">
-            <span class="sidebar-logo-text">Leve1y</span>
-            <span class="sidebar-logo-sub">~ Level 1Up Daily ~</span>
-          </div>
-          <div class="sidebar-nav">
-            <%= link_to monthly_path(Time.zone.today.strftime('%Y-%m')), class: "nav-item" do %>
-              <span class="nav-icon"><%= render 'shared/icons/book' %></span>デイリーログ
-            <% end %>
-            <%= link_to histories_path, class: "nav-item" do %>
-              <span class="nav-icon"><%= render 'shared/icons/hourglass' %></span>ヒストリー
-            <% end %>
-          </div>
-        </nav>
-        <div class="main-wrapper">
-          <header class="main-header">
+      <div class="app-shell" data-controller="search-drawer sidebar">
+
+        <%# ヘッダー: 画面全幅 %>
+        <header class="main-header">
+          <button class="user-icon-btn"
+                  type="button"
+                  data-action="click->sidebar#toggle"
+                  title="サイドバー折りたたみ">
+            <%= render 'shared/icons/sidebar' %>
+          </button>
+
+          <div class="header-actions">
+            <button class="user-icon-btn" type="button"
+                    data-action="click->search-drawer#toggle"
+                    title="セマンティック検索">
+              <%= render 'shared/icons/search' %>
+            </button>
             <details class="user-menu" data-controller="dropdown">
               <summary class="user-icon-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
@@ -57,10 +57,49 @@
                       data: { turbo_confirm: 'アカウントを削除しますか？この操作は取り消せません。' } %>
               </div>
             </details>
-          </header>
+          </div>
+        </header>
+
+        <%# サイドバー + メイン: ヘッダー下の領域を横分割 %>
+        <div class="app-body">
+          <nav class="sidebar">
+            <div class="sidebar-logo">
+              <span class="sidebar-logo-text">Leve1y</span>
+              <span class="sidebar-logo-sub">~ Level 1Up Daily ~</span>
+            </div>
+            <div class="sidebar-nav">
+              <%= link_to monthly_path(Time.zone.today.strftime('%Y-%m')), class: "nav-item" do %>
+                <span class="nav-icon"><%= render 'shared/icons/book' %></span>デイリーログ
+              <% end %>
+              <%= link_to histories_path, class: "nav-item" do %>
+                <span class="nav-icon"><%= render 'shared/icons/hourglass' %></span>ヒストリー
+              <% end %>
+            </div>
+          </nav>
+
           <main class="main-content">
             <%= yield %>
           </main>
+          <%# 検索ドロワー %>
+          <div class="search-drawer" data-search-drawer-target="panel">
+          <div class="search-drawer-resize"
+              data-action="mousedown->search-drawer#startResize"></div>
+          <div class="search-drawer-header">
+            <span class="search-drawer-title">探索</span>
+            <button class="modal-close" type="button"
+                    data-action="click->search-drawer#close">✕</button>
+          </div>
+          <form class="search-drawer-form" data-action="submit->search-drawer#search">
+            <input type="text" class="search-drawer-input"
+                  data-search-drawer-target="input"
+                  data-action="keydown.esc->search-drawer#close"
+                  placeholder="キーワードで検索..."
+                  autocomplete="off">
+            <button type="submit" class="search-drawer-submit">検索</button>
+          </form>
+          <div class="search-drawer-status" data-search-drawer-target="status"></div>
+          <div class="search-drawer-results" data-search-drawer-target="results"></div>
+        </div>
         </div>
       </div>
     <% else %>
@@ -69,3 +108,4 @@
       </div>
     <% end %>
   </body>
+</html>

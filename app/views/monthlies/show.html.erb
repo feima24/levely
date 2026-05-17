@@ -72,7 +72,11 @@
       <div class="monthly-panel" data-calendar-target="panel">
         <div data-calendar-target="panelContent">
           <% if @month.year == @today.year && @month.month == @today.month %>
-            <div class="panel-date-header"><%= @today.strftime('%Y/%m/%d') %></div>
+            <% btn_label = @today_items.any? || @today_log&.insights.present? ? '編集する' : '作成する' %>
+            <button class="panel-edit-btn" data-action="click->calendar#openModal">
+              <%= @today.strftime('%Y/%m/%d') %> の記録を<%= btn_label %>
+            </button>
+            <div class="panel-scroll-area">
             <% if @today_items.any? || @today_log&.insights.present? %>
               <% if @today_items.any? %>
                 <div class="panel-items">
@@ -95,14 +99,11 @@
               <% end %>
               <% if @today_log&.insights.present? %>
                 <div class="panel-insights-label">気づき</div>
-                <div class="panel-insights" data-calendar-target="insightsText"><%= @today_log.insights %></div>
-                <button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">▾ もっと見る</button>
               <% end %>
-              <button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>
             <% else %>
               <p class="panel-empty">記録がありません</p>
-              <button class="panel-edit-btn" data-action="click->calendar#openModal">＋ 記録を作成する</button>
             <% end %>
+            </div>
           <% elsif @month > @today %>
             <p class="panel-empty">まだ記録がありません</p>
           <% else %>

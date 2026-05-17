@@ -1,37 +1,3 @@
-/* ===== 月ナビ ===== */
-.monthly-nav {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 0.5rem 0;
-}
-
-.monthly-title {
-  font-size: 1.1rem;
-  color: var(--rpg-text);
-  font-weight: bold;
-}
-
-.monthly-nav-btn {
-  color: var(--rpg-muted);
-  text-decoration: none;
-  font-size: 1.1rem;
-}
-.monthly-nav-btn:hover {
-  color: var(--rpg-accent);
-}
-
-/* ===== メインレイアウト ===== */
-.monthly-grid {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 0 1.5rem;
-}
-
 /* ===== ステータス ===== */
 .current-stats {
   display: flex;
@@ -65,10 +31,52 @@
   font-size: 1.1rem;
 }
 
+/* ===== メインレイアウト ===== */
+.monthly-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0 1.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ===== 月ナビ ===== */
+.monthly-nav {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.monthly-title {
+  font-size: 1.1rem;
+  color: var(--rpg-text);
+  font-weight: bold;
+}
+
+.monthly-nav-btn {
+  color: var(--rpg-muted);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+.monthly-nav-btn:hover {
+  color: var(--rpg-accent);
+}
+
 /* ===== カレンダー ===== */
+.monthly-calendar {
+  border: 1px solid var(--rpg-border);
+  padding: 0.5rem;
+}
+
 .monthly-calendar table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .monthly-calendar th {
@@ -86,7 +94,6 @@
   font-size: 0.85rem;
 }
 
-/* 日付番号 */
 .day-number {
   display: inline-flex;
   align-items: center;
@@ -104,7 +111,6 @@
   color: var(--rpg-text);
 }
 
-/* 今日: アクセントカラーの丸 */
 .today .day-number {
   background-color: var(--rpg-accent);
   color: var(--rpg-bg);
@@ -115,7 +121,6 @@
   color: var(--rpg-bg);
 }
 
-/* 選択中（Step 2で使用） */
 .selected .day-number {
   background-color: rgba(255, 215, 0, 0.2);
   color: var(--rpg-accent);
@@ -125,32 +130,46 @@
   color: var(--rpg-bg);
 }
 
-/* セル状態 */
 .future       { opacity: 0.3; pointer-events: none; }
 .other-month  { visibility: hidden; }
 
-/* 曜日色 */
 .sunday   { color: #ff6b6b; }
 .saturday { color: #87ceeb; }
 
-/* 学習ドット */
 .dot          { width: 6px; height: 6px; border-radius: 50%; margin: 2px auto 0; }
 .dot--weak    { background-color: var(--rpg-success); }
 .dot--strong  { background-color: var(--rpg-strong); }
 
-/* ===== 右パネル ===== */
+/* ===== 日報パネル ===== */
 .monthly-panel {
   grid-column: 2;
   grid-row: 1 / 3;
-  padding-left: 1.5rem;
+  padding: 0.5rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
 }
 
-.panel-date-header {
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--rpg-text);
-  margin-bottom: 0.8rem;
-  padding-top: 0.5rem;
+.monthly-panel > [data-calendar-target="panelContent"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.panel-scroll-area--has-overflow:not(.panel-scroll-area--scrolled-bottom) {
+  box-shadow: inset 0 -20px 15px -15px rgba(74, 122, 181, 0.3);
+}
+
+.panel-scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rpg-border) transparent;
 }
 
 .panel-items {
@@ -203,40 +222,41 @@
   border: 1px solid rgba(74, 122, 181, 0.3);
 }
 
-.panel-more-btn {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
+.panel-insights-label {
+  font-size: 0.7rem;
   color: var(--rpg-muted);
-  font-size: 0.8rem;
-  font-family: 'DotGothic16', monospace;
-  cursor: pointer;
-  padding: 0.4rem 0;
-  text-align: center;
+  margin-top: 0.8rem;
+  margin-bottom: 0.2rem;
+  border-top: 1px solid rgba(74, 122, 181, 0.3);
+  padding-top: 0.5rem;
 }
-.panel-more-btn:hover {
-  color: var(--rpg-accent);
-  background-color: rgba(255, 255, 255, 0.05);
+
+.panel-insights {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .panel-edit-btn {
-  display: block;
-  width: 100%;
-  padding: 0.6rem;
-  background-color: var(--rpg-accent);
-  color: var(--rpg-bg);
-  border: none;
-  border-radius: 4px;
-  text-decoration: none;
-  text-align: center;
-  font-size: 0.85rem;
+  display: inline-block;
+  font-size: 0.8rem;
   font-family: 'DotGothic16', monospace;
+  color: var(--rpg-text);
+  background: none;
+  border: 1px solid var(--rpg-border);
+  border-radius: 3px;
+  padding: 0.3rem 0.6rem;
   cursor: pointer;
-  margin-top: 0.8rem;
+  text-decoration: none;
+  margin-bottom: 0.8rem;
 }
 .panel-edit-btn:hover {
-  opacity: 0.85;
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
 }
 
 .panel-empty {
@@ -253,17 +273,34 @@
 }
 @keyframes blink { 50% { opacity: 0.4; } }
 
-/* ===== レポートタイトル ===== */
+/* ===== レポート ===== */
+.monthly-summary-section {
+  margin-top: 0.8rem;
+  max-width: 550px;
+}
+
 .summary-title {
   font-size: 0.9rem;
   color: var(--rpg-text);
   margin: 0 0 0.5rem 0;
 }
 
-/* ===== 月間合計 ===== */
-.monthly-summary-section {
-  margin-top: 0.8rem;
-  max-width: 550px;
+.section-heading {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.section-icon {
+  color: var(--rpg-accent);
+  font-size: 0.6rem;
+  margin-right: 0.3rem;
+}
+
+.pixel-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.4rem;
 }
 
 .summary-total-section {
@@ -296,7 +333,6 @@
   height: 100%;
 }
 
-/* ===== カテゴリ凡例 ===== */
 .summary-legend {
   display: flex;
   flex-wrap: wrap;
@@ -324,7 +360,6 @@
   font-size: 0.7rem;
 }
 
-/* ===== 週ごと横バー ===== */
 .summary-weekly {
   padding-top: 0.5rem;
 }
@@ -366,24 +401,12 @@
   font-size: 0.7rem;
   color: var(--rpg-text);
   text-align: right;
-  }
+}
 
 .weekly-row-value small {
   font-size: 0.55rem;
   color: var(--rpg-muted);
   margin: 0 0.1rem;
-}
-
-.section-heading {
-  font-size: 0.8rem;
-  color: var(--rpg-text);
-  margin: 0 0 0.5rem 0;
-}
-
-.section-icon {
-  color: var(--rpg-accent);
-  font-size: 0.6rem;
-  margin-right: 0.3rem;
 }
 
 /* ===== モーダル ===== */
@@ -545,34 +568,6 @@
 }
 .modal-save-btn:hover { opacity: 0.85; }
 
-.panel-insights {
-  font-size: 0.8rem;
-  color: var(--rpg-text);
-  margin: 0.5rem 0;
-  white-space: pre-wrap;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 18;
-  line-clamp: 18;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.panel-insights--open {
-  display: block;
-  max-height: none;
-  overflow-y: visible;
-}
-
-.panel-insights-label {
-  font-size: 0.7rem;
-  color: var(--rpg-muted);
-  margin-top: 0.8rem;
-  margin-bottom: 0.2rem;
-  border-top: 1px solid rgba(74, 122, 181, 0.3);
-  padding-top: 0.5rem;
-}
-
 .modal-overlay[data-view-mode="true"] .modal-add-row,
 .modal-overlay[data-view-mode="true"] .modal-footer,
 .modal-overlay[data-view-mode="true"] .modal-row-delete {
@@ -592,9 +587,35 @@
   color: var(--rpg-text);
 }
 
-/* ===== ピクセルアイコン ===== */
-.pixel-icon {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 0.4rem;
+/* ===== レスポンシブ ===== */
+@container (max-width: 700px) {
+  .monthly-grid {
+    grid-template-columns: 1fr;
+  }
+  .monthly-panel {
+    grid-column: 1;
+    grid-row: auto;
+    padding-left: 0;
+    margin-top: 1.5rem;
+  }
+
+  .monthly-calendar td {
+    padding: 0.2rem;
+  }
+  .day-number {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .day-number {
+    width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
+  }
+  .monthly-calendar th {
+    font-size: 0.65rem;
+  }
 }
