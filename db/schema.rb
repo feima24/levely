@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_08_185136) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_17_120437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -27,10 +27,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_08_185136) do
 
   create_table "daily_log_embeddings", force: :cascade do |t|
     t.bigint "daily_log_id", null: false
-    t.vector "embedding", limit: 1536
     t.string "embedding_model", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.vector "embedding", limit: 1024
     t.index ["daily_log_id"], name: "index_daily_log_embeddings_on_daily_log_id"
   end
 
