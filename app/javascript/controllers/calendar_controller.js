@@ -11,9 +11,6 @@ export default class extends Controller {
     "modalStatus",
     "insightsInput",
     "rowTemplate",
-
-    "insightsText",
-    "moreBtn",
   ];
 
   static values = {
@@ -37,10 +34,27 @@ export default class extends Controller {
       this._selectedDate = this.todayValue;
       this._currentData = this.todayDataValue;
     }
+
+    this._scrollArea = this.panelTarget.querySelector(".panel-scroll-area");
+    if (this._scrollArea)
+      this._scrollArea.addEventListener("scroll", this._onPanelScroll);
+
+    requestAnimationFrame(() => {
+      if (this._scrollArea) {
+        const hasOverflow =
+          this._scrollArea.scrollHeight > this._scrollArea.clientHeight;
+        this._scrollArea.classList.toggle(
+          "panel-scroll-area--has-overflow",
+          hasOverflow,
+        );
+      }
+    });
   }
 
   disconnect() {
     document.removeEventListener("keydown", this._handleKeydown);
+    if (this._scrollArea)
+      this._scrollArea.removeEventListener("scroll", this._onPanelScroll);
   }
 
   // ===== 日付選択 =====
@@ -85,7 +99,12 @@ export default class extends Controller {
     const items = data.learning_items || [];
     const insights = data.insights || "";
     const hasContent = items.length > 0 || insights;
-    let html = `<div class="panel-date-header">${this._formatDate(this._selectedDate)}</div>`;
+    const btnLabel = hasContent ? "編集" : "＋ 作成";
+    const btnText = hasContent
+      ? `${this._formatDate(this._selectedDate)} の記録を編集する`
+      : `${this._formatDate(this._selectedDate)} の記録を作成する`;
+    let html = `<button class="panel-edit-btn" data-action="click->calendar#openModal">${btnText}</button>`;
+    html += '<div class="panel-scroll-area">';
 
     if (items.length > 0) {
       html += '<div class="panel-items">';
@@ -113,42 +132,28 @@ export default class extends Controller {
 
     if (insights) {
       html += '<div class="panel-insights-label">気づき</div>';
-      html += `<div class="panel-insights" data-calendar-target="insightsText">${this._esc(insights)}</div>`;
-      html +=
-        '<button class="panel-more-btn" data-action="click->calendar#toggleInsights" style="display:none" data-calendar-target="moreBtn">▼ もっと見る</button>';
+      html += `<div class="panel-insights">${this._esc(insights)}</div>`;
     }
 
-    if (hasContent) {
-      html +=
-        '<button class="panel-edit-btn" data-action="click->calendar#openModal">編集する</button>';
-    } else {
+    if (!hasContent) {
       html += '<p class="panel-empty">記録がありません</p>';
-      html +=
-        '<button class="panel-edit-btn" data-action="click->calendar#openModal">＋ 記録を作成する</button>';
     }
 
+    html += "</div>";
     this.panelContentTarget.innerHTML = html;
 
+    const scrollArea =
+      this.panelContentTarget.querySelector(".panel-scroll-area");
+    this.panelTarget.scrollTop = 0;
     requestAnimationFrame(() => {
-      if (this.hasInsightsTextTarget && this.hasMoreBtnTarget) {
-        const el = this.insightsTextTarget;
-        if (el.scrollHeight > el.clientHeight) {
-          this.moreBtnTarget.style.display = "block";
-        }
+      if (scrollArea) {
+        const hasOverflow = scrollArea.scrollHeight > scrollArea.clientHeight;
+        scrollArea.classList.toggle(
+          "panel-scroll-area--has-overflow",
+          hasOverflow,
+        );
       }
     });
-  }
-
-  toggleInsights() {
-    const el = this.insightsTextTarget;
-    const btn = this.moreBtnTarget;
-    if (el.classList.contains("panel-insights--open")) {
-      el.classList.remove("panel-insights--open");
-      btn.textContent = "▼ もっと見る";
-    } else {
-      el.classList.add("panel-insights--open");
-      btn.textContent = "▲ 閉じる";
-    }
   }
 
   _setPanelLoading() {
@@ -338,6 +343,14 @@ export default class extends Controller {
 
   _handleKeydown = (e) => {
     if (e.key === "Escape") this.closeModal();
+  };
+
+  _onPanelScroll = () => {
+    const el =
+      this._scrollArea || this.panelTarget.querySelector(".panel-scroll-area");
+    if (!el) return;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 8;
+    el.classList.toggle("panel-scroll-area--scrolled-bottom", atBottom);
   };
 
   _formatDate(str) {
