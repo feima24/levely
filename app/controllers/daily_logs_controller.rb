@@ -47,9 +47,9 @@ class DailyLogsController < ApplicationController
   private
 
   def upsert_embedding(daily_log)
-    vector = EmbeddingService.generate(daily_log_text(daily_log))
+    vector = EmbeddingService.generate(daily_log_text(daily_log), input_type: 'search_query')
     embedding = daily_log.daily_log_embedding || daily_log.build_daily_log_embedding
-    embedding.update!(embedding: vector, embedding_model: 'text-embedding-3-small')
+    embedding.update!(embedding: vector, embedding_model: 'embed-multilingual-v3.0')
   end
 
   def embedding_for(daily_log)

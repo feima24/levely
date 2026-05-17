@@ -17,7 +17,7 @@ class SemanticSearchController < ApplicationController
   private
 
   def search_results(query)
-    vector = EmbeddingService.generate(query)
+    EmbeddingService.generate(query, input_type: 'search_query')
     find_nearest_logs(vector).map { |log| format_log(log) }
   end
 
