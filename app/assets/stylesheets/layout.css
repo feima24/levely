@@ -1,6 +1,7 @@
-.app-layout {
+.app-shell {
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* ── サイドバー ── */
@@ -54,10 +55,6 @@
   white-space: nowrap;
 }
 
-.nav-item:hover {
-  color: var(--rpg-accent);
-}
-
 .nav-icon {
   width: 14px;
   height: 14px;
@@ -66,7 +63,7 @@
   flex-shrink: 0;
 }
 
-nav-item svg {
+.nav-item svg {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
@@ -85,10 +82,20 @@ nav-item svg {
 
 .main-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.4rem 1rem;
   background: var(--rpg-panel);
   border-bottom: 2px solid var(--rpg-border);
+  position: sticky;
+  top: 0;
+  z-index: 700;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 /* ── ユーザーメニュー ── */
@@ -166,4 +173,47 @@ nav-item svg {
 .main-content {
   flex: 1;
   padding: 1.5rem;
+  container-type: inline-size;
+  overflow-y: auto;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── サイドバー折りたたみ ── */
+.sidebar {
+  transition: margin-left 0.25s ease-in-out;
+}
+
+.app-layout--sidebar-collapsed .sidebar {
+  margin-left: -200px;
+}
+
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  left: 200px;
+  transform: translateY(-50%);
+  z-index: 50;
+  background: var(--rpg-panel);
+  border: 2px solid var(--rpg-border);
+  color: var(--rpg-text);
+  cursor: pointer;
+  padding: 0.6rem 0.3rem;
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.9rem;
+  transition: left 0.25s ease-in-out;
+}
+
+.sidebar-toggle:hover {
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
+}
+
+.app-layout--sidebar-collapsed .sidebar-toggle {
+  left: 0;
 }
