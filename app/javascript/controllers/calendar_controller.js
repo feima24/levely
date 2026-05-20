@@ -49,6 +49,12 @@ export default class extends Controller {
         );
       }
     });
+
+    const params = new URLSearchParams(window.location.search);
+    const openDate = params.get("date");
+    if (openDate) {
+      this._selectDate(openDate);
+    }
   }
 
   disconnect() {
