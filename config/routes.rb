@@ -11,6 +11,11 @@ Rails.application.routes.draw do
   resources :learning_items, only: %i[create update destroy]
   resources :categories, only: %i[index update]
   resources :monthlies, only: %i[show], param: :month
+  resources :monthly_goals, only: %i[create update], param: :month do
+    member do
+      patch :toggle
+    end
+  end
   resources :histories, only: [:index]
 
   post 'semantic_search', to: 'semantic_search#search'

@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :categories, dependent: :destroy
   has_many :daily_logs, dependent: :destroy
+  has_many :monthly_goals, dependent: :destroy
 
   validates :password, format: {
     with: /\A(?=.*[a-zA-Z])(?=.*\d).{10,}\z/,
