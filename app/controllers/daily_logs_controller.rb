@@ -34,13 +34,10 @@ class DailyLogsController < ApplicationController
     @date = Date.iso8601(params[:date])
     daily_log = current_user.daily_logs.find_by(date: @date)
 
-    if daily_log.nil? || daily_log_text(daily_log).blank?
-      daily_log&.daily_log_embedding&.destroy
-      render json: { success: true, skipped: true }
-      return
-    end
+    return skip_embedding(daily_log) if skip_embedding?(daily_log)
 
     upsert_embedding(daily_log)
+
     render json: { success: true }
   end
 
@@ -49,7 +46,7 @@ class DailyLogsController < ApplicationController
   def upsert_embedding(daily_log)
     vector = EmbeddingService.generate(daily_log_text(daily_log), input_type: 'search_query')
     embedding = daily_log.daily_log_embedding || daily_log.build_daily_log_embedding
-    embedding.update!(embedding: vector, embedding_model: 'embed-multilingual-v3.0')
+    embedding.update!(embedding: vector, embedding_model: EmbeddingService::MODEL)
   end
 
   def embedding_for(daily_log)
@@ -112,8 +109,15 @@ class DailyLogsController < ApplicationController
   end
 
   def daily_log_text(daily_log)
-    parts = daily_log.learning_items.pluck(:summary)
-    parts << daily_log.insights if daily_log.insights.present?
-    parts.join("\n")
+    [*daily_log.learning_items.pluck(:summary), daily_log.insights].compact_blank.join("\n")
+  end
+
+  def skip_embedding?(daily_log)
+    daily_log.nil? || daily_log_text(daily_log).blank?
+  end
+
+  def skip_embedding(daily_log)
+    daily_log&.daily_log_embedding&.destroy
+    render json: { success: true, skipped: true }
   end
 end
