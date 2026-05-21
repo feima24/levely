@@ -115,80 +115,153 @@
   </div>
 
 <%# ===== 月間レポート ===== %>
-<div class="monthly-summary-section rpg-window">
-  <h3 class="summary-title"><%= @month.strftime('%-m月') %>のレポート</h3>
+<div class="monthly-summary-section"
+     data-controller="monthly-goal"
+     data-monthly-goal-month-value="<%= @month.strftime('%Y-%m') %>"
+     data-monthly-goal-editable-value="<%= @month.year == @today.year && @month.month == @today.month %>"
+     data-monthly-goal-goal-value="<%= (@monthly_goal ? {
+       goal1: @monthly_goal.goal1,
+       goal2: @monthly_goal.goal2,
+       goal3: @monthly_goal.goal3,
+       completed1: @monthly_goal.completed1,
+       completed2: @monthly_goal.completed2,
+       completed3: @monthly_goal.completed3,
+       rank: @monthly_goal.rank
+     } : {}).to_json %>">
 
-  <div class="summary-total-section">
-    <h3 class="section-heading">
-      <span class="pixel-icon"><%= render 'shared/icons/trophy' %></span>
-      <span>Monthly EXP</span>
-    </h3>
-    <span class="summary-total-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
-    <div class="summary-total-bar">
-      <% if @monthly_total_minutes > 0 %>
-        <% @category_totals.each do |cat, minutes| %>
-          <div class="summary-total-segment" style="width: <%= (minutes.to_f / @monthly_total_minutes * 100).round(1) %>%; background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></div>
-        <% end %>
-      <% end %>
-    </div>
-    <div class="summary-legend">
-      <% @category_totals.each do |cat, minutes| %>
-        <div class="summary-legend-item">
-          <span class="summary-legend-color" style="background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></span>
-          <span><%= cat&.name || '未分類' %></span>
-          <span class="summary-legend-minutes"><%= minutes / 60 > 0 ? "#{minutes / 60}時間#{minutes % 60}分" : "#{minutes}分" %></span>
+  <div class="summary-layout">
+    <div class="summary-left rpg-window">
+      <div class="summary-total-section">
+        <h3 class="section-heading">
+          <span class="pixel-icon"><%= render 'shared/icons/trophy' %></span>
+          <span>Monthly EXP</span>
+        </h3>
+        <span class="summary-total-value"><%= @monthly_total_minutes / 60 %><small>時間</small> <%= @monthly_total_minutes % 60 %><small>分</small></span>
+        <div class="summary-total-bar">
+          <% if @monthly_total_minutes > 0 %>
+            <% @category_totals.each do |cat, minutes| %>
+              <div class="summary-total-segment" style="width: <%= (minutes.to_f / @monthly_total_minutes * 100).round(1) %>%; background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></div>
+            <% end %>
+          <% end %>
         </div>
-      <% end %>
+        <div class="summary-legend">
+          <% @category_totals.each do |cat, minutes| %>
+            <div class="summary-legend-item">
+              <span class="summary-legend-color" style="background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></span>
+              <span><%= cat&.name || '未分類' %></span>
+              <span class="summary-legend-minutes"><%= minutes / 60 > 0 ? "#{minutes / 60}時間#{minutes % 60}分" : "#{minutes}分" %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="summary-weekly">
+        <h3 class="section-heading">
+          <span class="pixel-icon"><%= render 'shared/icons/sword' %></span>
+          <span>Weekly EXP</span>
+        </h3>
+        <% max_minutes = @weekly_totals.map { |w| w[:minutes] }.max || 0 %>
+        <div class="weekly-bars">
+          <% @weekly_totals.each do |week| %>
+            <div class="weekly-row">
+              <span class="weekly-row-label"><%= week[:start_day] %>-<%= week[:end_day] %>日</span>
+              <div class="weekly-row-track">
+                <div class="weekly-row-fill" style="width: <%= max_minutes > 0 ? (week[:minutes].to_f / max_minutes * 100).round : 0 %>%"></div>
+              </div>
+              <span class="weekly-row-value">
+                <% if week[:minutes] >= 60 %>
+                  <%= week[:minutes] / 60 %><small>h</small> <%= week[:minutes] % 60 %><small>m</small>
+                <% elsif week[:minutes] > 0 %>
+                  <%= week[:minutes] %><small>m</small>
+                <% else %>
+                  -
+                <% end %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-right rpg-window">
+      <div class="quest-header">
+        <h3 class="section-heading">
+          <span class="pixel-icon"><%= render 'shared/icons/crown' %></span>
+          <span>Monthly Quest</span>
+        </h3>
+        <div class="quest-header-actions" data-monthly-goal-target="rankDisplay"></div>
+      </div>
+      <div data-monthly-goal-target="content"></div>
+    </div>
+
+  <!-- 確認ポップアップ -->
+  <div class="goal-confirm-overlay" data-monthly-goal-target="confirm" style="display:none;"
+       data-action="click->monthly-goal#confirmOverlayClick">
+    <div class="goal-confirm-dialog rpg-window">
+      <button class="goal-confirm-close" data-action="click->monthly-goal#confirmCancel">✕</button>
+      <p data-monthly-goal-target="confirmMessage"></p>
+      <div class="goal-confirm-buttons" data-monthly-goal-target="confirmButtons">
+        <button class="goal-confirm-yes" data-action="click->monthly-goal#confirmYes">はい</button>
+        <button class="goal-confirm-cancel" data-action="click->monthly-goal#confirmCancel">いいえ</button>
+      </div>
     </div>
   </div>
 
-  <div class="summary-weekly">
-    <h3 class="section-heading">
-      <span class="pixel-icon"><%= render 'shared/icons/sword' %></span>
-      <span>Weekly EXP</span>
-    </h3>
-    <% max_minutes = @weekly_totals.map { |w| w[:minutes] }.max || 0 %>
-    <div class="weekly-bars">
-      <% @weekly_totals.each do |week| %>
-        <div class="weekly-row">
-          <span class="weekly-row-label"><%= week[:start_day] %>-<%= week[:end_day] %>日</span>
-          <div class="weekly-row-track">
-            <div class="weekly-row-fill" style="width: <%= max_minutes > 0 ? (week[:minutes].to_f / max_minutes * 100).round : 0 %>%"></div>
-          </div>
-          <span class="weekly-row-value">
-            <% if week[:minutes] >= 60 %>
-              <%= week[:minutes] / 60 %><small>h</small> <%= week[:minutes] % 60 %><small>m</small>
-            <% elsif week[:minutes] > 0 %>
-              <%= week[:minutes] %><small>m</small>
-            <% else %>
-              -
-            <% end %>
-          </span>
+<!-- 目標入力モーダル -->
+<div class="modal-overlay quest-modal-overlay" data-monthly-goal-target="modal" style="display:none;">
+  <div class="quest-modal rpg-window">
+    <div class="quest-modal-header">
+      <h3 class="quest-modal-title">👑 月間クエストを設定</h3>
+      <p class="quest-modal-desc">
+        目標の達成進捗度を3段階に分けて確認できるようにしよう。<br>
+        Bronze は必ず達成できるラインに設定するのがコツ。
+      </p>
+    </div>
+
+    <div class="quest-modal-body">
+      <div class="quest-modal-field">
+        <div class="quest-modal-field-label">
+          <span class="quest-modal-medal quest-modal-medal--gold">G</span>
+          <span class="quest-modal-field-tier quest-modal-field-tier--gold">GOLD QUEST</span>
+          <span class="quest-modal-field-pct quest-modal-field-pct--gold">進捗率 100%</span>
         </div>
-      <% end %>
+        <input type="text" class="quest-modal-input" data-monthly-goal-target="goalInput3"
+               placeholder="最終目標">
+      </div>
+
+      <div class="quest-modal-field">
+        <div class="quest-modal-field-label">
+          <span class="quest-modal-medal quest-modal-medal--silver">S</span>
+          <span class="quest-modal-field-tier quest-modal-field-tier--silver">SILVER QUEST</span>
+          <span class="quest-modal-field-pct quest-modal-field-pct--silver">進捗率 80%</span>
+        </div>
+        <input type="text" class="quest-modal-input" data-monthly-goal-target="goalInput2"
+               placeholder="中間目標">
+      </div>
+
+      <div class="quest-modal-field">
+        <div class="quest-modal-field-label">
+          <span class="quest-modal-medal quest-modal-medal--bronze">B</span>
+          <span class="quest-modal-field-tier quest-modal-field-tier--bronze">BRONZE QUEST</span>
+          <span class="quest-modal-field-pct quest-modal-field-pct--bronze">進捗率 60%</span>
+        </div>
+        <input type="text" class="quest-modal-input" data-monthly-goal-target="goalInput1"
+               placeholder="必達目標">
+      </div>
+    </div>
+
+    <div class="quest-modal-unlock-hint">
+        💡 Bronze → Silver → Gold の順にクエストが解放されます。
+    </div>
+
+    <div class="quest-modal-status" data-monthly-goal-target="modalStatus"></div>
+
+    <div class="quest-modal-footer">
+      <button class="quest-modal-cancel" data-action="click->monthly-goal#closeModal">キャンセル</button>
+      <button class="quest-modal-submit" data-action="click->monthly-goal#saveGoals">セーブする ▶</button>
     </div>
   </div>
 </div>
-
-  <%# ===== モーダル ===== %>
-  <div class="modal-overlay" data-calendar-target="modal" style="display:none;">
-    <div class="modal-content rpg-window">
-      <div class="modal-header">
-        <span data-calendar-target="modalTitle"></span>
-        <button class="modal-close" data-action="click->calendar#closeModal">✕</button>
-      </div>
-      <div class="modal-body">
-        <div data-calendar-target="modalRows"></div>
-        <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 学習記録を追加</button>
-        <label class="modal-label">気づき</label>
-        <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="19"></textarea>
-      </div>
-      <div class="modal-footer">
-        <span data-calendar-target="modalStatus"></span>
-        <button class="modal-save-btn" data-action="click->calendar#saveModal">保存する</button>
-      </div>
-    </div>
-  </div>
 
 <template id="modal-row-template" data-calendar-target="rowTemplate">
   <div class="modal-row" data-item-id="" data-lock-version="0">

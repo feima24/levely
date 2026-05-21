@@ -19,6 +19,12 @@ class MonthlyGoalsController < ApplicationController
     end
   end
 
+  def destroy
+    @goal = find_goal
+    @goal.destroy!
+    head :no_content
+  end
+
   def toggle
     @goal = find_goal
     num = params[:goal_number].to_i

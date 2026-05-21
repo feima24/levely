@@ -273,16 +273,21 @@
 }
 @keyframes blink { 50% { opacity: 0.4; } }
 
-/* ===== レポート ===== */
+/* ===== EXP・クエスト ===== */
 .monthly-summary-section {
   margin-top: 0.8rem;
-  max-width: 550px;
 }
 
-.summary-title {
-  font-size: 0.9rem;
-  color: var(--rpg-text);
-  margin: 0 0 0.5rem 0;
+.summary-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.summary-right {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 .section-heading {
@@ -585,6 +590,421 @@
 .modal-view-summary {
   flex: 1;
   color: var(--rpg-text);
+}
+
+/* ===== 月間目標 ===== */
+
+/* --- ヘッダー --- */
+.quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.quest-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quest-progress {
+  font-size: 0.7rem;
+  color: var(--rpg-accent);
+  background: rgba(255, 215, 0, 0.1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.quest-edit-btn {
+  font-size: 0.7rem;
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-muted);
+  background: none;
+  border: 1px solid var(--rpg-border);
+  border-radius: 3px;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+}
+.quest-edit-btn:hover {
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
+}
+
+/* --- ティア表示 --- */
+.quest-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quest-tier {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(74, 122, 181, 0.2);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.quest-tier--active {
+  border-color: var(--rpg-accent);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.12);
+  background: rgba(255, 215, 0, 0.03);
+}
+
+.quest-tier--cleared {
+  border-color: var(--rpg-success);
+}
+
+.quest-tier--locked {
+  opacity: 0.4;
+}
+
+/* --- メダル円 --- */
+.quest-tier-medal {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  color: var(--rpg-bg);
+}
+
+.quest-tier-medal--gold {
+  background: linear-gradient(135deg, #ffd700, #b8860b);
+}
+.quest-tier-medal--silver {
+  background: linear-gradient(135deg, #e8e8e8, #808080);
+}
+.quest-tier-medal--bronze {
+  background: linear-gradient(135deg, #daa06d, #8b5c2a);
+}
+
+.quest-tier--locked .quest-tier-medal {
+  filter: grayscale(1);
+}
+
+/* --- ティア本体 --- */
+.quest-tier-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.quest-tier-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.quest-tier-label {
+  font-size: 0.65rem;
+  color: var(--rpg-muted);
+  letter-spacing: 0.05em;
+}
+
+.quest-goal-text {
+  font-size: 0.8rem;
+  color: var(--rpg-text);
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* --- ステータスバッジ --- */
+.quest-badge {
+  font-size: 0.55rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.quest-badge--active {
+  background: rgba(255, 165, 0, 0.15);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.3);
+}
+
+.quest-badge--cleared {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--rpg-success);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.quest-badge--locked {
+  background: rgba(136, 153, 170, 0.1);
+  color: var(--rpg-muted);
+  border: 1px solid rgba(136, 153, 170, 0.15);
+}
+
+/* --- 未設定 --- */
+.quest-empty {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.quest-empty-text {
+  color: var(--rpg-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.quest-set-btn {
+  font-size: 0.8rem;
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-text);
+  background: none;
+  border: 1px dashed var(--rpg-border);
+  border-radius: 3px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+}
+.quest-set-btn:hover {
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
+}
+
+/* --- 確認ポップアップ --- */
+.goal-confirm-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+}
+
+.goal-confirm-dialog {
+  padding: 2.5rem 3rem;
+  max-width: 420px;
+  min-width: 320px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.goal-confirm-dialog p {
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.goal-confirm-buttons {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.goal-confirm-yes,
+.goal-confirm-cancel {
+  font-size: 0.85rem;
+  padding: 0.5rem 1.5rem;
+}
+
+.goal-confirm-yes {
+  background: var(--rpg-accent);
+  color: var(--rpg-bg);
+  border-color: var(--rpg-accent);
+}
+
+.goal-confirm-cancel {
+  background: none;
+  color: var(--rpg-text);
+}
+
+.goal-confirm-close {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  background: none;
+  border: none;
+  color: var(--rpg-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+}
+.goal-confirm-close:hover {
+  color: var(--rpg-text);
+}
+
+/* ===== クエスト作成モーダル ===== */
+.quest-modal-overlay {
+  z-index: 501;
+}
+
+.quest-modal {
+  width: 90%;
+  max-width: 750px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.5rem 3rem;
+}
+
+/* --- ヘッダー --- */
+.quest-modal-header {
+  display: block;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(74, 122, 181, 0.2);
+}
+
+.quest-modal-title {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--rpg-text);
+  margin: 0 0 0.8rem 0;
+}
+
+.quest-modal-desc {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--rpg-muted);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.quest-modal-highlight {
+  color: var(--rpg-accent);
+}
+
+/* --- 入力フィールド --- */
+.quest-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.quest-modal-field {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(74, 122, 181, 0.2);
+  border-radius: 4px;
+}
+
+.quest-modal-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.quest-modal-field-pct {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  opacity: 0.5;
+  margin-left: auto;
+}
+
+.quest-modal-medal {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--rpg-bg);
+  flex-shrink: 0;
+}
+.quest-modal-medal--gold   { background: linear-gradient(135deg, #ffd700, #b8860b); }
+.quest-modal-medal--silver { background: linear-gradient(135deg, #e8e8e8, #808080); }
+.quest-modal-medal--bronze { background: linear-gradient(135deg, #daa06d, #8b5c2a); }
+
+.quest-modal-field-tier {
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+.quest-modal-field-tier--gold   { color: #ffd700; }
+.quest-modal-field-tier--silver { color: #c0c0c0; }
+.quest-modal-field-tier--bronze { color: #cd7f32; }
+
+.quest-modal-input {
+  width: 100%;
+  background-color: var(--rpg-bg);
+  border: 1px solid var(--rpg-border);
+  color: var(--rpg-text);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.9rem;
+  font-family: 'DotGothic16', monospace;
+  box-sizing: border-box;
+}
+.quest-modal-input::placeholder {
+  color: var(--rpg-muted);
+  opacity: 0.5;
+}
+
+.quest-modal-status:not(:empty) {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  border-radius: 4px;
+  background: rgba(255, 100, 100, 0.08);
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  text-align: center;
+}
+
+/* --- フッター --- */
+.quest-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(74, 122, 181, 0.2);
+}
+
+.quest-modal-unlock-hint {
+  margin-top: 1.2rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(74, 122, 181, 0.3);
+  border-radius: 4px;
+  background: rgba(74, 122, 181, 0.08);
+  font-size: 0.8rem;
+  color: var(--rpg-muted);
+  text-align: center;
+}
+
+.quest-modal-cancel {
+  font-size: 0.9rem;
+  font-family: 'DotGothic16', monospace;
+  color: var(--rpg-text);
+  background: none;
+  border: 1px solid var(--rpg-border);
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.quest-modal-cancel:hover {
+  border-color: var(--rpg-text);
+}
+
+.quest-modal-submit {
+  font-size: 0.9rem;
+  font-family: 'DotGothic16', monospace;
+  background: var(--rpg-accent);
+  color: var(--rpg-bg);
+  border: none;
+  padding: 0.6rem 2rem;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: bold;
+}
+.quest-modal-submit:hover {
+  opacity: 0.85;
 }
 
 /* ===== レスポンシブ ===== */
