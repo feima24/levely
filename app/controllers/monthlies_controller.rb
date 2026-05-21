@@ -4,6 +4,7 @@ class MonthliesController < ApplicationController
     load_monthly_data
     load_stats
     load_today_data
+    load_monthly_goal
   rescue ArgumentError
     redirect_to monthly_path(Time.zone.today.strftime('%Y-%m'))
   end
@@ -98,5 +99,9 @@ class MonthliesController < ApplicationController
       count += 1
     end
     count
+  end
+
+  def load_monthly_goal
+    @monthly_goal = current_user.monthly_goals.find_by(month: @month)
   end
 end

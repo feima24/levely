@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_17_120437) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_20_074137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -57,6 +57,21 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_120437) do
     t.index ["daily_log_id"], name: "index_learning_items_on_daily_log_id"
   end
 
+  create_table "monthly_goals", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "month", null: false
+    t.string "goal1", null: false
+    t.string "goal2", null: false
+    t.string "goal3", null: false
+    t.boolean "completed1", default: false, null: false
+    t.boolean "completed2", default: false, null: false
+    t.boolean "completed3", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "month"], name: "index_monthly_goals_on_user_id_and_month", unique: true
+    t.index ["user_id"], name: "index_monthly_goals_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -74,4 +89,5 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_120437) do
   add_foreign_key "daily_logs", "users"
   add_foreign_key "learning_items", "categories"
   add_foreign_key "learning_items", "daily_logs"
+  add_foreign_key "monthly_goals", "users"
 end
