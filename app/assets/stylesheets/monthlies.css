@@ -32,6 +32,10 @@
 }
 
 /* ===== メインレイアウト ===== */
+.monthly-layout{
+  container-type: inline-size;
+}
+
 .monthly-grid {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -56,6 +60,7 @@
   font-size: 1.1rem;
   color: var(--rpg-text);
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .monthly-nav-btn {
@@ -276,6 +281,7 @@
 /* ===== EXP・クエスト ===== */
 .monthly-summary-section {
   margin-top: 0.8rem;
+  container-type: inline-size;
 }
 
 .summary-layout {
@@ -1026,6 +1032,10 @@
     width: 26px;
     height: 26px;
     font-size: 0.8rem;
+  }
+
+  .summary-layout {
+    grid-template-columns: 1fr;
   }
 }
 

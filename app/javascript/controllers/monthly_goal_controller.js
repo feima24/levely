@@ -201,6 +201,8 @@ export default class extends Controller {
   }
 
   openModal() {
+    document.dispatchEvent(new CustomEvent("app:modal-open"));
+    document.body.classList.add("modal-open");
     const goal = this.goalValue;
     if (goal && goal.goal1) {
       this.goalInput1Target.value = goal.goal1;
@@ -217,6 +219,8 @@ export default class extends Controller {
   }
 
   closeModal() {
+    document.dispatchEvent(new CustomEvent("app:modal-close"));
+    document.body.classList.remove("modal-open");
     this.modalTarget.style.display = "none";
   }
 

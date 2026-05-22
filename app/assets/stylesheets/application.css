@@ -64,3 +64,10 @@ body {
 .alert { border-color: var(--rpg-danger); background-color: #2a0d0d; color: var(--rpg-danger); font-size: 0.75rem; }
 .notice::before { content: '► '; }
 .alert::before  { content: '⚠ '; }
+
+body.modal-open .main-header,
+body.modal-open .sidebar {
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}

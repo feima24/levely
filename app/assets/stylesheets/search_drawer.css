@@ -5,8 +5,6 @@
   overflow: hidden;
   position: relative;
   background-color: var(--rpg-panel);
-  border-left: 3px solid var(--rpg-border);
-  box-shadow: -4px 0 0 #000;
   display: flex;
   flex-direction: column;
   transition: width 0.25s ease-in-out;
@@ -14,6 +12,8 @@
 
 .search-drawer--open {
   width: 400px;
+  border-left: 3px solid var(--rpg-border);
+  box-shadow: -4px 0 0 #000;
 }
 
 /* ── ヘッダー ── */
@@ -178,4 +178,26 @@
   font-size: 0.8rem;
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+/* 中間幅: ドロワー幅を縮小して両立しやすく */
+@media (max-width: 1100px) and (min-width: 801px) {
+  .search-drawer--open {
+    width: 320px;
+  }
+}
+
+/* スマホ・タブレット: フルスクリーン */
+@media (max-width: 800px) {
+  .search-drawer--open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    z-index: 1000;
+    border-left: none;
+    box-shadow: none;
+  }
 }
