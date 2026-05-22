@@ -13,8 +13,8 @@
           <% if item.duration_minutes.present? %>
             <span class="history-duration"><%= item.duration_minutes %>分</span>
           <% end %>
-          <% if item.body_markdown.present? %>
-            <p class="history-body"><%= item.body_markdown %></p>
+          <% if item.summary.present? %>
+            <p class="history-body"><%= item.summary %></p>
           <% end %>
         </div>
       <% end %>
