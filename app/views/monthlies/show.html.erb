@@ -263,6 +263,26 @@
   </div>
 </div>
 
+<%# ===== モーダル ===== %>
+<div class="modal-overlay" data-calendar-target="modal" style="display:none;">
+  <div class="modal-content rpg-window">
+    <div class="modal-header">
+      <span data-calendar-target="modalTitle"></span>
+      <button class="modal-close" data-action="click->calendar#closeModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div data-calendar-target="modalRows"></div>
+      <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 学習記録を追加</button>
+      <label class="modal-label">気づき</label>
+      <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="19"></textarea>
+    </div>
+    <div class="modal-footer">
+      <span data-calendar-target="modalStatus"></span>
+      <button class="modal-save-btn" data-action="click->calendar#saveModal">保存する</button>
+    </div>
+  </div>
+</div>
+
 <template id="modal-row-template" data-calendar-target="rowTemplate">
   <div class="modal-row" data-item-id="" data-lock-version="0">
     <div class="modal-field">
@@ -293,9 +313,9 @@
   </div>
 </template>
 
-  <datalist id="category-list">
-    <% @categories.each do |cat| %>
-      <option value="<%= cat.name %>">
-    <% end %>
-  </datalist>
+<datalist id="category-list">
+  <% @categories.each do |cat| %>
+    <option value="<%= cat.name %>">
+  <% end %>
+</datalist>
 </div>
