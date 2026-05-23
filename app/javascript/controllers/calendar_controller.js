@@ -169,6 +169,8 @@ export default class extends Controller {
 
   // ===== モーダル =====
   openModal() {
+    document.dispatchEvent(new CustomEvent("app:modal-open"));
+    document.body.classList.add("modal-open");
     this.insightsInputTarget.readOnly = false;
     this.modalTarget.dataset.viewMode = "";
     this._deletedItemIds = [];
@@ -177,6 +179,8 @@ export default class extends Controller {
   }
 
   closeModal() {
+    document.dispatchEvent(new CustomEvent("app:modal-close"));
+    document.body.classList.remove("modal-open");
     this.insightsInputTarget.readOnly = false;
     this.modalTarget.dataset.viewMode = "";
     this.modalTarget.style.display = "none";

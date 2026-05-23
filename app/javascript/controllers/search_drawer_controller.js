@@ -18,9 +18,29 @@ export default class extends Controller {
     this.onMouseUp = this.onMouseUp.bind(this);
 
     this._restoreResults();
+
+    // モーダルと連動
+    this._modalOpen = false;
+    this._handleAppModalOpen = () => {
+      this._modalOpen = true;
+      this.close();
+    };
+    this._handleAppModalClose = () => {
+      this._modalOpen = false;
+    };
+    document.addEventListener("app:modal-open", this._handleAppModalOpen);
+    document.addEventListener("app:modal-close", this._handleAppModalClose);
+  }
+
+  disconnect() {
+    document.removeEventListener("app:modal-open", this._handleAppModalOpen);
+    document.removeEventListener("app:modal-close", this._handleAppModalClose);
   }
 
   toggle() {
+    // モーダル中は無反応
+    if (this._modalOpen) return;
+
     const isOpen = this.panelTarget.classList.toggle("search-drawer--open");
     sessionStorage.setItem("searchDrawerOpen", isOpen);
     if (isOpen) {
