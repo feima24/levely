@@ -49,16 +49,16 @@
                   <td class="<%= calendar_cell_class(day, @month) %><%= ' today' if day == @today %>"
                       data-calendar-target="cell"
                       data-date="<%= day %>">
-                    <% if day.month == @month.month %>
-                      <% if day > Time.zone.today %>
+                      <% if day.month != @month.month %>
+                        <span class="day-number"><%= day.day %></span>
+                      <% elsif day > Time.zone.today %>
                         <span class="day-number"><%= day.day %></span>
                       <% else %>
                         <span class="day-number" data-action="click->calendar#select"
                               data-date="<%= day %>"><%= day.day %></span>
-                        <% unless @calendar_data[day].nil? %>
-                          <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"
-                               data-dot-date="<%= day %>"></div>
-                        <% end %>
+                      <% unless @calendar_data[day].nil? %>
+                        <div class="dot dot--<%= dot_level(@calendar_data[day]) %>"
+                             data-dot-date="<%= day %>"></div>
                       <% end %>
                     <% end %>
                   </td>
