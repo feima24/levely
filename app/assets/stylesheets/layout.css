@@ -69,7 +69,8 @@
   flex-shrink: 0;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item--active {
   color: var(--rpg-accent);
 }
 
@@ -126,7 +127,8 @@
   height: 20px;
 }
 
-.user-icon-btn:hover {
+.user-icon-btn:hover,
+.user-icon-btn--active {
   border-color: var(--rpg-accent);
   color: var(--rpg-accent);
 }
@@ -216,4 +218,66 @@
 
 .app-layout--sidebar-collapsed .sidebar-toggle {
   left: 0;
+}
+
+/* PCではデフォルトで非表示（@media の外） */
+.sidebar-close {
+  display: none;
+}
+
+/* スマホサイズ用の変更（@media は1つだけ） */
+@media (max-width: 800px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 48px;
+    bottom: 0;
+    width: 100%;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-in-out;
+    margin-left: 0;
+  }
+
+  .user-icon-btn:hover:not(.user-icon-btn--active) {
+    border-color: var(--rpg-border);
+    color: var(--rpg-text);
+  }
+
+  .app-shell:not(.app-layout--sidebar-collapsed) .sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .app-layout--sidebar-collapsed .sidebar {
+    margin-left: 0;
+  }
+
+  /* ×ボタンをスマホで表示 */
+  .sidebar-close {
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--rpg-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+  }
+  .sidebar-close:hover {
+    color: var(--rpg-accent);
+  }
+
+  /* ロゴを下にずらして×との縦距離を確保 */
+  .sidebar .sidebar-logo {
+    align-items: flex-start;
+    padding-top: 2rem;
+    padding-left: 0.5rem;
+  }
+
+  .main-header {
+    z-index: 1100;
+  }
 }
