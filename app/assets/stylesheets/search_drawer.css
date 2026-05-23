@@ -191,7 +191,7 @@
 @media (max-width: 800px) {
   .search-drawer--open {
     position: fixed;
-    top: 0;
+    top: 48px;
     left: 0;
     right: 0;
     bottom: 0;

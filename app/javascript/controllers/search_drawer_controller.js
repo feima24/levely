@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["panel", "input", "results", "status", "summary"];
+  static targets = [
+    "panel",
+    "input",
+    "results",
+    "status",
+    "summary",
+    "toggleButton",
+  ];
 
   connect() {
     if (sessionStorage.getItem("searchDrawerOpen") === "true") {
@@ -18,6 +25,7 @@ export default class extends Controller {
     this.onMouseUp = this.onMouseUp.bind(this);
 
     this._restoreResults();
+    this._syncButtonState();
 
     // モーダルと連動
     this._modalOpen = false;
@@ -30,11 +38,28 @@ export default class extends Controller {
     };
     document.addEventListener("app:modal-open", this._handleAppModalOpen);
     document.addEventListener("app:modal-close", this._handleAppModalClose);
+
+    // リサイズ追従
+    this._handleResize = () => {
+      if (!this.panelTarget.classList.contains("search-drawer--open")) return;
+
+      // サイドバー自動折りたたみ
+      if (window.innerWidth < 1200) {
+        this.element.classList.add("app-layout--sidebar-collapsed");
+      }
+
+      // 1100px未満になったら手動リサイズ幅をクリアして CSS に任せる
+      if (window.innerWidth < 1100) {
+        this.panelTarget.style.width = "";
+      }
+    };
+    window.addEventListener("resize", this._handleResize);
   }
 
   disconnect() {
     document.removeEventListener("app:modal-open", this._handleAppModalOpen);
     document.removeEventListener("app:modal-close", this._handleAppModalClose);
+    window.removeEventListener("resize", this._handleResize);
   }
 
   toggle() {
@@ -49,23 +74,45 @@ export default class extends Controller {
       );
       if (window.innerWidth < 1200) {
         this.element.classList.add("app-layout--sidebar-collapsed");
+        sessionStorage.setItem("sidebarCollapsed", "true");
       }
       this.inputTarget.focus();
+      // サイドバーボタンの active を外す
+      const sidebarBtn = this.element.querySelector(
+        '[data-sidebar-target="toggleButton"]',
+      );
+      if (sidebarBtn) sidebarBtn.classList.remove("user-icon-btn--active");
     } else {
-      if (!this._sidebarWasCollapsed) {
+      // スマホサイズではサイドバーを再表示せず、メイン画面に戻す
+      if (window.innerWidth <= 800) {
+        this.element.classList.add("app-layout--sidebar-collapsed");
+        sessionStorage.setItem("sidebarCollapsed", "true");
+      } else if (!this._sidebarWasCollapsed) {
         this.element.classList.remove("app-layout--sidebar-collapsed");
+        sessionStorage.setItem("sidebarCollapsed", "false");
       }
       this.panelTarget.style.width = "";
     }
+    this._syncButtonState();
   }
 
   close() {
     this.panelTarget.classList.remove("search-drawer--open");
     sessionStorage.setItem("searchDrawerOpen", "false");
     this.panelTarget.style.width = "";
-    if (!this._sidebarWasCollapsed) {
-      this.element.classList.remove("app-layout--sidebar-collapsed");
+    // スマホサイズではサイドバーも閉じた状態を維持し、メイン画面に戻す
+    if (window.innerWidth < 800) {
+      this.element.classList.add("app-layout--sidebar-collapsed");
+      sessionStorage.setItem("sidebarCollapsed", "true");
     }
+    this._syncButtonState();
+  }
+
+  _syncButtonState() {
+    if (!this.hasToggleButtonTarget) return;
+    const isOpen = this.panelTarget.classList.contains("search-drawer--open");
+    this.toggleButtonTarget.classList.toggle("user-icon-btn--active", isOpen);
+    this.toggleButtonTarget.blur();
   }
 
   // ── リサイズ ──
@@ -171,7 +218,7 @@ export default class extends Controller {
       ? `<div class="search-result-insights">${this.escapeHtml(log.insights)}</div>`
       : "";
 
-    return `<a href="/monthlies/${this.escapeHtml(log.date.substring(0, 7))}?date=${this.escapeHtml(log.date)}" class="search-result-card">
+    return `<a href="/monthlies/${this.escapeHtml(log.date.substring(0, 7))}?date=${this.escapeHtml(log.date)}" class="search-result-card" data-action="click->search-drawer#close">
       <div class="search-result-date">${this.escapeHtml(log.date)}</div>
       ${items}${insights}
     </a>`;

@@ -64,9 +64,19 @@
 }
 
 .monthly-nav-btn {
+  flex: 1;
   color: var(--rpg-muted);
   text-decoration: none;
   font-size: 1.1rem;
+  padding: 0.5rem 0;
+}
+
+.monthly-nav-btn:first-child {
+  text-align: right;
+}
+
+.monthly-nav-btn:last-child {
+  text-align: left;
 }
 .monthly-nav-btn:hover {
   color: var(--rpg-accent);
@@ -117,8 +127,7 @@
 }
 
 .today .day-number {
-  background-color: var(--rpg-accent);
-  color: var(--rpg-bg);
+  color: var(--rpg-accent);
   font-weight: bold;
 }
 .today .day-number:hover {
@@ -127,16 +136,12 @@
 }
 
 .selected .day-number {
-  background-color: rgba(255, 215, 0, 0.2);
-  color: var(--rpg-accent);
-}
-.today.selected .day-number {
-  background-color: var(--rpg-accent);
-  color: var(--rpg-bg);
+  border: 2px solid var(--rpg-accent);
+  color: var(--rpg-text);
 }
 
 .future       { opacity: 0.3; pointer-events: none; }
-.other-month  { visibility: hidden; }
+.other-month  { opacity: 0.2; pointer-events: none; }
 
 .sunday   { color: #ff6b6b; }
 .saturday { color: #87ceeb; }
@@ -424,7 +429,7 @@
 .modal-overlay {
   position: fixed;
   top: 0;
-  left: 200px;
+  left: 0px;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);

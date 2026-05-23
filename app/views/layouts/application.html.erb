@@ -31,6 +31,7 @@
           <button class="user-icon-btn"
                   type="button"
                   data-action="click->sidebar#toggle"
+                  data-sidebar-target="toggleButton"
                   title="サイドバー折りたたみ">
             <%= render 'shared/icons/sidebar' %>
           </button>
@@ -38,6 +39,7 @@
           <div class="header-actions">
             <button class="user-icon-btn" type="button"
                     data-action="click->search-drawer#toggle"
+                    data-search-drawer-target="toggleButton"
                     title="セマンティック検索">
               <%= render 'shared/icons/search' %>
             </button>
@@ -63,17 +65,26 @@
         <%# サイドバー + メイン: ヘッダー下の領域を横分割 %>
         <div class="app-body">
           <nav class="sidebar">
-            <div class="sidebar-logo">
-              <span class="sidebar-logo-text">Levely</span>
-              <span class="sidebar-logo-sub">~ Level Up Daily ~</span>
-            </div>
+              <button class="sidebar-close" type="button"
+                      data-action="click->sidebar#toggle"
+                      title="閉じる">✕</button>
+              <div class="sidebar-logo">
+                <span class="sidebar-logo-text">Levely</span>
+                <span class="sidebar-logo-sub">~ Level Up Daily ~</span>
+              </div>
             <div class="sidebar-nav">
-              <%= link_to monthly_path(Time.zone.today.strftime('%Y-%m')), class: "nav-item" do %>
+              <%= link_to monthly_path(Time.zone.today.strftime('%Y-%m')),
+                  class: "nav-item #{'nav-item--active' if controller_name == 'monthlies'}",
+                  data: { action: "click->sidebar#close" } do %>
                 <span class="nav-icon"><%= render 'shared/icons/book' %></span>デイリーログ
               <% end %>
-              <%= link_to histories_path, class: "nav-item" do %>
-                <span class="nav-icon"><%= render 'shared/icons/hourglass' %></span>ヒストリー
-              <% end %>
+              <% if false %>
+              <%= link_to histories_path,
+                          class: "nav-item",
+                          data: { action: "click->sidebar#close" } do %>
+        <span class="nav-icon"><%= render 'shared/icons/hourglass' %></span>ヒストリー
+      <% end %>
+      <% end %>
             </div>
           </nav>
 
