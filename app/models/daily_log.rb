@@ -5,4 +5,8 @@ class DailyLog < ApplicationRecord
 
   validates :date, presence: true, uniqueness: { scope: :user_id }
   validates :insights, length: { maximum: 5000 }
+
+  def recorded?
+    learning_items.any? || insights.present?
+  end
 end

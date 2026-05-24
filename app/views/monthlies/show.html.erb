@@ -72,12 +72,12 @@
       <div class="monthly-panel" data-calendar-target="panel">
         <div data-calendar-target="panelContent">
           <% if @month.year == @today.year && @month.month == @today.month %>
-            <% btn_label = @today_items.any? || @today_log&.insights.present? ? '編集する' : '作成する' %>
+            <% btn_label = @today_log&.recorded? ? '編集する' : '作成する' %>
             <button class="panel-edit-btn" data-action="click->calendar#openModal">
               <%= @today.strftime('%Y/%m/%d') %> の記録を<%= btn_label %>
             </button>
             <div class="panel-scroll-area">
-            <% if @today_items.any? || @today_log&.insights.present? %>
+            <% if @today_log&.recorded? %>
               <% if @today_items.any? %>
                 <div class="panel-items">
                   <% @today_items.each do |item| %>
@@ -166,7 +166,14 @@
             <div class="weekly-row">
               <span class="weekly-row-label"><%= week[:start_day] %>-<%= week[:end_day] %>日</span>
               <div class="weekly-row-track">
-                <div class="weekly-row-fill" style="width: <%= max_minutes > 0 ? (week[:minutes].to_f / max_minutes * 100).round : 0 %>%"></div>
+                <% if week[:minutes] > 0 %>
+                  <div class="weekly-row-fill" style="width: <%= (week[:minutes].to_f / max_minutes * 100).round %>%">
+                    <% week[:category_minutes].each do |cat, minutes| %>
+                      <div class="weekly-row-segment"
+                           style="width: <%= (minutes.to_f / week[:minutes] * 100).round(1) %>%; background: <%= @category_color_map[cat&.name] || '#ffd700' %>"></div>
+                    <% end %>
+                  </div>
+                <% end %>
               </div>
               <span class="weekly-row-value">
                 <% if week[:minutes] >= 60 %>

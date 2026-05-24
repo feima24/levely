@@ -143,8 +143,8 @@
 .future       { opacity: 0.3; pointer-events: none; }
 .other-month  { opacity: 0.2; pointer-events: none; }
 
-.sunday   { color: #ff6b6b; }
-.saturday { color: #87ceeb; }
+.monthly-calendar th.sunday   { color: #ff6b6b; }
+.monthly-calendar th.saturday { color: #87ceeb; }
 
 .dot          { width: 6px; height: 6px; border-radius: 50%; margin: 2px auto 0; }
 .dot--weak    { background-color: var(--rpg-success); }
@@ -408,9 +408,14 @@
 
 .weekly-row-fill {
   height: 100%;
-  background: var(--rpg-accent);
   border-radius: 2px;
   min-width: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.weekly-row-segment {
+  height: 100%;
 }
 
 .weekly-row-value {
