@@ -2,6 +2,7 @@ class LearningItem < ApplicationRecord
   belongs_to :daily_log
   belongs_to :category, optional: true
 
+  validates :summary, length: { maximum: 100 }
   validate :any_field_present
 
   private
