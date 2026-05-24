@@ -428,7 +428,7 @@
 /* ===== モーダル ===== */
 .modal-overlay {
   position: fixed;
-  top: 0;
+  top: 48px;
   left: 0px;
   right: 0;
   bottom: 0;
@@ -480,9 +480,25 @@
   font-size: 0.85rem;
   font-family: 'DotGothic16', monospace;
   resize: vertical;
-  margin-bottom: 1rem;
+  margin-bottom: 0.3rem;
   box-sizing: border-box;
   min-height: 200px;
+}
+
+.modal-textarea-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.modal-textarea-counter {
+  font-size: 0.7rem;
+  color: var(--rpg-muted);
+  font-family: 'DotGothic16', monospace;
+}
+
+.modal-textarea-counter--warn {
+  color: var(--rpg-danger);
 }
 
 .modal-add-row {
@@ -503,7 +519,10 @@
   grid-template-columns: 120px 1fr auto auto;
   gap: 0.5rem;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--rpg-border);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .modal-field {
@@ -559,9 +578,12 @@
   border: none;
   color: var(--rpg-muted);
   cursor: pointer;
-  font-size: 1rem;
   padding: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+.modal-row-delete svg { display: block; }
 .modal-row-delete:hover { color: var(--rpg-danger); }
 
 .modal-footer {
@@ -581,8 +603,14 @@
   font-family: 'DotGothic16', monospace;
   cursor: pointer;
   width: 100%;
+  white-space: nowrap;
 }
 .modal-save-btn:hover { opacity: 0.85; }
+.modal-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.modal-footer-status {
+  white-space: nowrap;
+}
 
 .modal-overlay[data-view-mode="true"] .modal-add-row,
 .modal-overlay[data-view-mode="true"] .modal-footer,
@@ -1053,4 +1081,17 @@
   .monthly-calendar th {
     font-size: 0.65rem;
   }
+
+  .modal-row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "category duration delete"
+      "summary  summary  summary";
+    row-gap: 0.6rem;
+    column-gap: 0.4rem;
+  }
+  .modal-row > .modal-field:not(.modal-field--summary) { grid-area: category; }
+  .modal-field--summary { grid-area: summary; }
+  .modal-duration { grid-area: duration; }
+  .modal-row-delete { grid-area: delete; align-self: center; }
 }

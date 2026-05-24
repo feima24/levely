@@ -274,11 +274,14 @@
       <div data-calendar-target="modalRows"></div>
       <button class="modal-add-row" data-action="click->calendar#addModalRow">＋ 学習記録を追加</button>
       <label class="modal-label">気づき</label>
-      <textarea class="modal-textarea" data-calendar-target="insightsInput" rows="19"></textarea>
+      <textarea class="modal-textarea" data-calendar-target="insightsInput" data-action="input->calendar#updateInsightsCounter" rows="19" maxlength="5000"></textarea>
+      <div class="modal-textarea-footer">
+        <span class="modal-textarea-counter" data-calendar-target="insightsCounter">0 / 5000</span>
+      </div>
     </div>
     <div class="modal-footer">
-      <span data-calendar-target="modalStatus"></span>
-      <button class="modal-save-btn" data-action="click->calendar#saveModal">保存する</button>
+      <span class="modal-footer-status" data-calendar-target="modalStatus"></span>
+      <button class="modal-save-btn" data-calendar-target="saveButton" data-action="click->calendar#saveModal">セーブする</button>
     </div>
   </div>
 </div>
@@ -291,7 +294,7 @@
     </div>
     <div class="modal-field modal-field--summary">
       <label class="modal-field-label">概要</label>
-      <input type="text" class="modal-input" data-field="summary">
+      <input type="text" class="modal-input" data-field="summary" maxlength="100">
     </div>
     <div class="modal-duration">
       <select class="modal-select" data-field="duration_hours">
@@ -309,7 +312,9 @@
       </select>
       <span class="modal-duration-label">分</span>
     </div>
-    <button class="modal-row-delete" data-action="click->calendar#removeModalRow">✕</button>
+    <button class="modal-row-delete" data-action="click->calendar#removeModalRow" aria-label="この記録を削除">
+      <%= render "shared/icons/trash" %>
+    </button>
   </div>
 </template>
 
