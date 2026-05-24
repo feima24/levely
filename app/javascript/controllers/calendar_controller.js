@@ -10,6 +10,8 @@ export default class extends Controller {
     "modalRows",
     "modalStatus",
     "insightsInput",
+    "insightsCounter",
+    "saveButton",
     "rowTemplate",
   ];
 
@@ -176,15 +178,72 @@ export default class extends Controller {
     this._deletedItemIds = [];
     this._populateModal(this._currentData || { learning_items: [] });
     this.modalTarget.style.display = "flex";
+    this._resetSaveButton();
+    this.updateInsightsCounter();
+    this._initialSnapshot = this._captureFormState();
+  }
+
+  _resetSaveButton() {
+    if (!this.hasSaveButtonTarget) return;
+    this.saveButtonTarget.disabled = false;
+    this.saveButtonTarget.textContent = "セーブする";
+  }
+
+  updateInsightsCounter() {
+    if (!this.hasInsightsCounterTarget) return;
+    const len = this.insightsInputTarget.value.length;
+    this.insightsCounterTarget.textContent = `${len} / 5000`;
+    this.insightsCounterTarget.classList.toggle(
+      "modal-textarea-counter--warn",
+      len > 4500,
+    );
   }
 
   closeModal() {
+    if (this._isDirty()) {
+      if (!window.confirm("未保存の変更があります。閉じてもよろしいですか？")) {
+        return;
+      }
+    }
+    this._forceCloseModal();
+  }
+
+  _forceCloseModal() {
     document.dispatchEvent(new CustomEvent("app:modal-close"));
     document.body.classList.remove("modal-open");
     this.insightsInputTarget.readOnly = false;
     this.modalTarget.dataset.viewMode = "";
     this.modalTarget.style.display = "none";
     this._setModalStatus("");
+    this._initialSnapshot = null;
+  }
+
+  _captureFormState() {
+    const insights = this.insightsInputTarget.value;
+    const rows = Array.from(
+      this.modalRowsTarget.querySelectorAll(".modal-row"),
+    );
+    const items = rows
+      .map((row) => ({
+        itemId: row.dataset.itemId || "",
+        category:
+          row.querySelector("[data-field='category_name']")?.value || "",
+        summary: row.querySelector("[data-field='summary']")?.value || "",
+        hours: row.querySelector("[data-field='duration_hours']")?.value || "",
+        mins:
+          row.querySelector("[data-field='duration_minutes_part']")?.value ||
+          "",
+      }))
+      .filter(
+        (item) =>
+          item.itemId || item.category.trim() || item.summary.trim(),
+      );
+    return JSON.stringify({ insights, items });
+  }
+
+  _isDirty() {
+    if (this._initialSnapshot == null) return false;
+    return this._captureFormState() !== this._initialSnapshot;
   }
 
   addModalRow() {
@@ -200,7 +259,11 @@ export default class extends Controller {
   }
 
   async saveModal() {
-    this._setModalStatus("保存中...");
+    this._setModalStatus("");
+    if (this.hasSaveButtonTarget) {
+      this.saveButtonTarget.disabled = true;
+      this.saveButtonTarget.textContent = "セーブ中...";
+    }
     const date = this._selectedDate;
 
     try {
@@ -221,9 +284,10 @@ export default class extends Controller {
 
       await this._fetchDate(date);
       this._updateDot(date);
-      this.closeModal();
+      this._forceCloseModal();
     } catch {
       this._setModalStatus("エラーが発生しました");
+      this._resetSaveButton();
     }
   }
 
