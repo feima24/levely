@@ -45,23 +45,18 @@ class MonthliesController < ApplicationController
 
   def build_weekly_totals(daily_logs)
     logs_by_date = daily_logs.index_by(&:date)
+    weekly_date_ranges.filter_map { |days| build_week_totals(days, logs_by_date) }
+  end
 
-    weekly_date_ranges.filter_map do |days|
-      week_logs = days.filter_map { |d| logs_by_date[d] }
-      category_minutes = week_logs.flat_map(&:learning_items)
-                                  .reject { |i| i.duration_minutes.nil? }
-                                  .group_by(&:category)
-                                  .transform_values { |items| items.sum(&:duration_minutes) }
-                                  .sort_by { |_, m| -m }
-                                  .to_h
-      total = category_minutes.values.sum
-      {
-        start_day: days.first.day,
-        end_day: days.last.day,
-        minutes: total,
-        category_minutes: category_minutes
-      }
-    end
+  def build_week_totals(days, logs_by_date)
+    week_logs = days.filter_map { |d| logs_by_date[d] }
+    category_minutes = build_category_totals(week_logs)
+    {
+      start_day: days.first.day,
+      end_day: days.last.day,
+      minutes: category_minutes.values.sum,
+      category_minutes: category_minutes
+    }
   end
 
   def weekly_date_ranges
@@ -94,11 +89,7 @@ class MonthliesController < ApplicationController
 
   def calc_streak
     today = Time.zone.today
-    dates = current_user.daily_logs
-                        .where(date: ..today)
-                        .includes(:learning_items)
-                        .order(date: :desc)
-                        .filter_map { |log| log.date if log.recorded? }
+    dates = recorded_dates_desc(today)
     return 0 if dates.empty? || dates.first < today - 1
 
     base = dates.first
@@ -109,6 +100,14 @@ class MonthliesController < ApplicationController
       count += 1
     end
     count
+  end
+
+  def recorded_dates_desc(today)
+    current_user.daily_logs
+                .where(date: ..today)
+                .includes(:learning_items)
+                .order(date: :desc)
+                .filter_map { |log| log.date if log.recorded? }
   end
 
   def load_monthly_goal
