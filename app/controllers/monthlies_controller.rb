@@ -38,18 +38,25 @@ class MonthliesController < ApplicationController
   end
 
   def build_calendar_data(daily_logs)
-    daily_logs.to_h do |log|
-      [log.date, log.learning_items.sum { |i| i.duration_minutes.to_i }]
-    end
+    daily_logs
+      .select(&:recorded?)
+      .to_h { |log| [log.date, log.learning_items.sum { |i| i.duration_minutes.to_i }] }
   end
 
   def build_weekly_totals(daily_logs)
     logs_by_date = daily_logs.index_by(&:date)
+    weekly_date_ranges.filter_map { |days| build_week_totals(days, logs_by_date) }
+  end
 
-    weekly_date_ranges.filter_map do |days|
-      minutes = sum_minutes(days, logs_by_date)
-      { start_day: days.first.day, end_day: days.last.day, minutes: minutes }
-    end
+  def build_week_totals(days, logs_by_date)
+    week_logs = days.filter_map { |d| logs_by_date[d] }
+    category_minutes = build_category_totals(week_logs)
+    {
+      start_day: days.first.day,
+      end_day: days.last.day,
+      minutes: category_minutes.values.sum,
+      category_minutes: category_minutes
+    }
   end
 
   def weekly_date_ranges
@@ -59,13 +66,6 @@ class MonthliesController < ApplicationController
     (first_monday..last_sunday).each_slice(7).filter_map do |week|
       days = week.select { |d| d.month == @month.month }
       days.presence
-    end
-  end
-
-  def sum_minutes(days, logs_by_date)
-    days.sum do |d|
-      log = logs_by_date[d]
-      log ? log.learning_items.sum { |i| i.duration_minutes.to_i } : 0
     end
   end
 
@@ -88,17 +88,26 @@ class MonthliesController < ApplicationController
   end
 
   def calc_streak
-    dates = current_user.daily_logs
-                        .where(date: ..Time.zone.today)
-                        .order(date: :desc)
-                        .pluck(:date)
+    today = Time.zone.today
+    dates = recorded_dates_desc(today)
+    return 0 if dates.empty? || dates.first < today - 1
+
+    base = dates.first
     count = 0
     dates.each_with_index do |date, i|
-      break unless date == Time.zone.today - i.days
+      break unless date == base - i.days
 
       count += 1
     end
     count
+  end
+
+  def recorded_dates_desc(today)
+    current_user.daily_logs
+                .where(date: ..today)
+                .includes(:learning_items)
+                .order(date: :desc)
+                .filter_map { |log| log.date if log.recorded? }
   end
 
   def load_monthly_goal

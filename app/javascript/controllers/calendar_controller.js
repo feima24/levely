@@ -35,6 +35,10 @@ export default class extends Controller {
     if (this.monthValue === todayMonth) {
       this._selectedDate = this.todayValue;
       this._currentData = this.todayDataValue;
+      const todayCell = this.cellTargets.find(
+        (c) => c.dataset.date === this.todayValue,
+      );
+      if (todayCell) todayCell.classList.add("selected");
     }
 
     this._scrollArea = this.panelTarget.querySelector(".panel-scroll-area");
@@ -282,9 +286,8 @@ export default class extends Controller {
 
       this._request(`/daily_logs/${date}/generate_embedding`, "POST");
 
-      await this._fetchDate(date);
-      this._updateDot(date);
       this._forceCloseModal();
+      window.Turbo.visit(window.location.href, { action: "replace" });
     } catch {
       this._setModalStatus("エラーが発生しました");
       this._resetSaveButton();
