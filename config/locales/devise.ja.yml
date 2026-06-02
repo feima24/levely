@@ -13,4 +13,7 @@ ja:
       destroyed: "アカウントを削除しました。"
     passwords:
       send_instructions: "パスワードリセットのメールを送りました。"
-      updated: "パスワードを変更しました。"
+      updated: "パスワードを変更しました。新しいパスワードでログインしてください。"
+    mailer:
+      reset_password_instructions:
+        subject: "パスワード再設定のご案内"
