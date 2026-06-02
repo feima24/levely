@@ -80,12 +80,14 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: "levely.onrender.com", protocol: "https" }
 
+  config.action_mailer.default_url_options = { host: 'levely.onrender.com', protocol: 'https' }
+
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    user_name: "apikey",
-    password: ENV["SENDGRID_API_KEY"],
-    domain: "levely.onrender.com",
-    address: "smtp.sendgrid.net",
+    user_name: 'apikey',
+    password: ENV['SENDGRID_API_KEY'],
+    domain: 'levely.onrender.com',
+    address: 'smtp.sendgrid.net',
     port: 587,
     authentication: :plain,
     enable_starttls_auto: true
