@@ -8,12 +8,20 @@ ja:
       invalid: "メールアドレスまたはパスワードが違います。"
       not_found_in_database: "メールアドレスまたはパスワードが違います。"
       unauthenticated: ""
+      unconfirmed: "メールアドレスの認証が完了していません。送信されたメール内のリンクから認証を完了してください。"
     registrations:
-      signed_up: "アカウントを登録しました。"
+      signed_up: "アカウントを登録しました。メールアドレスの認証を完了してください。"
       destroyed: "アカウントを削除しました。"
     passwords:
       send_instructions: "パスワードリセットのメールを送りました。"
-      updated: "パスワードを変更しました。新しいパスワードでログインしてください。"
+      send_paranoid_instructions: "登録済みのメールアドレスであれば、パスワード再設定メールが送信されます。"
+      updated: "パスワードを変更しました。"
+      updated_not_active: "パスワードを変更しました。新しいパスワードでログインしてください。"
+      no_token: "このページにはアクセスできません。パスワード再設定メール内のリンクからアクセスしてください。期限切れの場合は再送をリクエストしてください。"
+    confirmations:
+      confirmed: "メールアドレスの認証が完了しました。"
+      send_instructions: "認証メールを送りました。数分以内に届かない場合は迷惑メールフォルダもご確認ください。"
+      send_paranoid_instructions: "登録済みの未認証メールアドレスであれば、認証メールが送信されます。"
     mailer:
       reset_password_instructions:
         subject: "パスワード再設定のご案内"
