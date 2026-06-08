@@ -1,0 +1,9 @@
+# Cursor の AI 機能（Tab 補完・Chat・Composer・Codebase Indexing）から除外
+
+# 環境変数ファイル
+.env
+.env.*
+
+# Rails の暗号鍵
+config/master.key
+config/credentials/*.key
