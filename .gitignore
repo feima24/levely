@@ -68,8 +68,5 @@ yarn-debug.log*
 !/storage/.keep
 /public/uploads
 
-# Ignore master key for decrypting credentials and more.
-/config/master.key
-
 # Ignore Claude worktrees
 .claude/worktrees/
