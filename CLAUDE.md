@@ -8,8 +8,18 @@
 ## コミットメッセージ
 
 - 形式: `{type}: 日本語の説明`
-- type: feat / fix / chore / refactor / style / ci
-- 1 PR につき原則 1 コミット
+- 1 PR につき原則 1 コミット（型が異なる変更は別コミットに分ける）
+
+### prefix の使い分け
+
+| prefix | 使う場面 | 例 |
+|---|---|---|
+| `feat:` | 新機能の追加 | feat: 月間クエスト機能を実装 |
+| `fix:` | バグ・不具合の修正 | fix: パスワード再設定メールが届かない問題を修正 |
+| `chore:` | 依存関係・設定・ドキュメント等 | chore: credentials.yml.encを廃止 |
+| `refactor:` | 動作を変えないコード改善 | refactor: 週間集計をコントローラに移動 |
+| `ci:` | `.github/workflows/` の変更 | ci: PostgreSQLをpgvector対応イメージに変更 |
+| `style:` | rubocop 等のコードスタイル修正 | style: rubocop指摘の空行を修正 |
 
 ## プルリクエスト
 
@@ -40,3 +50,10 @@
 - ファイル名を出す場合はバックティックでパス（`app/models/learning_item.rb`）
 - 英語見出し（Summary / Test plan）は使わない
 - issue がある場合は末尾に `Closes #XX`
+
+## コミット前の確認
+
+以下を実行してエラーがないことを確認してからコミットする。
+
+- `bin/rubocop` — スタイル違反（空行、メソッドの長さ等）
+- `bin/rspec` — テスト
