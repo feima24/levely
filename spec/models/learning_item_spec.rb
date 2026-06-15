@@ -40,6 +40,5 @@ RSpec.describe LearningItem, type: :model do
         expect(item).not_to be_valid
       end
     end
-
   end
 end
