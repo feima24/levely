@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   resources :daily_logs, only: %i[show update], param: :date do
     member do
-      post :find_related
       post :generate_embedding
     end
   end

@@ -23,13 +23,6 @@ class DailyLogsController < ApplicationController
     end
   end
 
-  def find_related
-    daily_log = current_user.daily_logs.find_by!(date: params[:date])
-    related_logs = related_logs_for(daily_log)
-
-    render json: { results: related_logs_json(related_logs) }
-  end
-
   def generate_embedding
     @date = Date.iso8601(params[:date])
     daily_log = current_user.daily_logs.find_by(date: @date)
@@ -52,34 +45,6 @@ class DailyLogsController < ApplicationController
   def embedding_for(daily_log)
     upsert_embedding(daily_log) unless daily_log.daily_log_embedding
     daily_log.daily_log_embedding.embedding
-  end
-
-  def related_logs_for(daily_log)
-    embedding = embedding_for(daily_log)
-
-    DailyLogEmbedding
-      .joins(:daily_log)
-      .where(daily_logs: { user_id: current_user.id })
-      .where.not(daily_log_id: daily_log.id)
-      .nearest_neighbors(:embedding, embedding, distance: 'cosine')
-      .limit(5)
-      .map(&:daily_log)
-  end
-
-  def related_logs_json(related_logs)
-    related_logs.map do |log|
-      {
-        date: log.date,
-        items: log.learning_items.map { |item| learning_item_json(item) }
-      }
-    end
-  end
-
-  def learning_item_json(item)
-    {
-      body: item.summary,
-      category: item.category&.name
-    }
   end
 
   def load_daily_log
