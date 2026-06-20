@@ -270,6 +270,11 @@ export default class extends Controller {
     }
     const date = this._selectedDate;
 
+    if (!this._validateRows()) {
+      this._resetSaveButton();
+      return;
+    }
+
     try {
       await this._request(`/daily_logs/${date}`, "PATCH", {
         insights: this.insightsInputTarget.value,
@@ -441,7 +446,21 @@ export default class extends Controller {
     return d.innerHTML;
   }
 
+  _validateRows() {
+    const rows = this.modalRowsTarget.querySelectorAll(".modal-row");
+    for (const row of rows) {
+      const cat = row.querySelector("[data-field='category_name']")?.value?.trim();
+      const sum = row.querySelector("[data-field='summary']")?.value?.trim();
+      if ((cat && !sum) || (!cat && sum)) {
+        this._setModalStatus("カテゴリと概要はセットで入力してください");
+        return false;
+      }
+    }
+    return true;
+  }
+
   _setModalStatus(msg) {
     if (this.hasModalStatusTarget) this.modalStatusTarget.textContent = msg;
   }
+
 }
