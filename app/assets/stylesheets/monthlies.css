@@ -593,8 +593,8 @@
 
 .modal-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-top: 1rem;
 }
 
@@ -613,8 +613,17 @@
 .modal-save-btn:hover { opacity: 0.85; }
 .modal-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.modal-footer-status {
-  white-space: nowrap;
+.modal-footer-status:empty {
+  display: none;
+}
+.modal-footer-status:not(:empty) {
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  border-radius: 4px;
+  background: rgba(255, 100, 100, 0.08);
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  text-align: center;
 }
 
 .modal-overlay[data-view-mode="true"] .modal-add-row,
