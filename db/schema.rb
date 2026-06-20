@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_15_124617) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_20_075024) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
 
   create_table "categories", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "name"
-    t.string "normalized_name"
+    t.string "name", null: false
+    t.string "normalized_name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "normalized_name"], name: "index_categories_on_user_id_and_normalized_name", unique: true
@@ -36,7 +36,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_15_124617) do
 
   create_table "daily_logs", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.date "date"
+    t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "insights"
