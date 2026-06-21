@@ -70,3 +70,7 @@ yarn-debug.log*
 
 # Ignore Claude worktrees
 .claude/worktrees/
+
+# Ignore macOS system files
+.DS_Store
+**/.DS_Store
