@@ -3,6 +3,14 @@ class LearningItemsController < ApplicationController
 
   def create
     date = Date.iso8601(params[:date])
+    uuid = params.dig(:learning_item, :client_uuid)
+
+    if uuid.present? && (existing = find_by_client_uuid(uuid))
+      @item = existing
+      render json: created_item_json, status: :ok
+      return
+    end
+
     @item = build_learning_item(date)
 
     if @item.save
@@ -53,6 +61,13 @@ class LearningItemsController < ApplicationController
       .joins(:daily_log)
       .where(daily_logs: { user: current_user })
       .find(params[:id])
+  end
+
+  def find_by_client_uuid(uuid)
+    LearningItem
+      .joins(:daily_log)
+      .where(daily_logs: { user: current_user })
+      .find_by(client_uuid: uuid)
   end
 
   def learning_item_params

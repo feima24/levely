@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_20_075024) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_21_131406) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_20_075024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_learning_items_on_category_id"
+    t.index ["client_uuid"], name: "index_learning_items_on_client_uuid", unique: true
     t.index ["daily_log_id"], name: "index_learning_items_on_daily_log_id"
   end
 
