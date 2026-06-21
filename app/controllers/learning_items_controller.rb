@@ -3,21 +3,8 @@ class LearningItemsController < ApplicationController
 
   def create
     date = Date.iso8601(params[:date])
-    uuid = params.dig(:learning_item, :client_uuid)
-
-    if uuid.present? && (existing = find_by_client_uuid(uuid))
-      @item = existing
-      render json: created_item_json, status: :ok
-      return
-    end
-
-    @item = build_learning_item(date)
-
-    if @item.save
-      render json: created_item_json, status: :created
-    else
-      render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
-    end
+    @item = find_or_build_item(date)
+    render_create_result
   rescue ArgumentError
     render plain: 'Invalid date', status: :bad_request
   end
@@ -68,6 +55,21 @@ class LearningItemsController < ApplicationController
       .joins(:daily_log)
       .where(daily_logs: { user: current_user })
       .find_by(client_uuid: uuid)
+  end
+
+  def find_or_build_item(date)
+    uuid = params.dig(:learning_item, :client_uuid)
+    (uuid.present? && find_by_client_uuid(uuid)) || build_learning_item(date)
+  end
+
+  def render_create_result
+    if @item.persisted?
+      render json: created_item_json, status: :ok
+    elsif @item.save
+      render json: created_item_json, status: :created
+    else
+      render json: { errors: @item.errors.full_messages }, status: :unprocessable_content
+    end
   end
 
   def learning_item_params
