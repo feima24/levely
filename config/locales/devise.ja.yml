@@ -25,3 +25,5 @@ ja:
     mailer:
       reset_password_instructions:
         subject: "パスワード再設定のご案内"
+      email_changed:
+        subject: "メールアドレス変更のお知らせ"
