@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
 <div data-controller="calendar"
      data-calendar-today-value="<%= @today %>"
      data-calendar-month-value="<%= @month.strftime('%Y-%m') %>"
