@@ -293,10 +293,20 @@ export default class extends Controller {
 
       this._forceCloseModal();
       window.Turbo.visit(window.location.href, { action: "replace" });
-    } catch {
-      this._setModalStatus("エラーが発生しました");
+    } catch (err) {
+      this._setModalStatus(this._errorMessageFor(err));
       this._resetSaveButton();
     }
+  }
+
+  _errorMessageFor(err) {
+    if (err?.status === 409) {
+      return "他の変更と競合しました。画面を再読み込みしてください";
+    }
+    if (err?.status === 422 && err.data?.errors) {
+      return err.data.errors.join("、");
+    }
+    return "エラーが発生しました";
   }
 
   _populateModal(data) {
@@ -420,7 +430,14 @@ export default class extends Controller {
       },
     };
     if (body) opts.body = JSON.stringify(body);
-    return fetch(url, opts);
+    const res = await fetch(url, opts);
+    if (!res.ok) {
+      const error = new Error(`Request failed: ${res.status}`);
+      error.status = res.status;
+      error.data = await res.json().catch(() => null);
+      throw error;
+    }
+    return res;
   }
 
   _handleKeydown = (e) => {
