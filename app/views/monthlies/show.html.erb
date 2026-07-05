@@ -103,6 +103,7 @@
               <% end %>
               <% if @today_log&.insights.present? %>
                 <div class="panel-insights-label">気づき</div>
+                <div class="panel-insights"><%= @today_log.insights %></div>
               <% end %>
             <% else %>
               <p class="panel-empty">記録がありません</p>
