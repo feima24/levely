@@ -15,15 +15,22 @@
  */
 
  :root {
-  --rpg-bg:      #080d18;
-  --rpg-panel:   #112244;
-  --rpg-border:  #4a7ab5;
-  --rpg-text:    #e8e8d0;
-  --rpg-accent:  #ffd700;
-  --rpg-muted:   #8899aa;
-  --rpg-danger:  #ff6b6b;
-  --rpg-success: #a8d8a8;
-  --rpg-strong:  #4caf50;
+  --rpg-bg:         #0b0f1e;
+  --rpg-panel:      #141929;
+  --rpg-panel-lift: #1b2136;
+  --rpg-border:     #8f7a46;
+  --frame-black:    #05070d;
+  --rpg-text:       #e8e8d0;
+  --rpg-accent:     #ffd700;
+  --candle:         #ffe9b3;
+  --ember:          #ff9d3d;
+  --ember-deep:     #ff5a36;
+  --night-top:      #080b16;
+  --night-horizon:  #171d33;
+  --rpg-muted:      #8d94a8;
+  --rpg-danger:     #ff6b6b;
+  --rpg-success:    #a8d8a8;
+  --rpg-strong:     #4caf50;
 }
 
 * {
@@ -38,15 +45,48 @@ body {
   min-height: 100vh;
 }
 
-/* RPG風ウィンドウ枠 */
+/* RPG風ウィンドウ枠（外周黒 → 真鍮 → 内側黒の多層） */
 .rpg-window {
+  position: relative;
   background-color: var(--rpg-panel);
-  border: 3px solid var(--rpg-border);
+  border: 2px solid var(--rpg-border);
   box-shadow:
-    inset 0 0 0 2px #0a1020,
-    4px 4px 0px #000;
+    0 0 0 2px var(--frame-black),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    4px 4px 0 rgba(0, 0, 0, 0.45);
   padding: 1.2rem 1.5rem;
   border-radius: 2px;
+}
+
+/* 窓枠の四隅の角ピクセル */
+.rpg-window::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--rpg-border), var(--rpg-border)),
+    linear-gradient(var(--rpg-border), var(--rpg-border)),
+    linear-gradient(var(--rpg-border), var(--rpg-border)),
+    linear-gradient(var(--rpg-border), var(--rpg-border));
+  background-size: 6px 6px;
+  background-position: 0 0, 100% 0, 0 100%, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* ボタンの押し込み（押すと右下に沈む） */
+button:not(:disabled):active,
+input[type="submit"]:not(:disabled):active,
+.user-icon-btn:active {
+  transform: translate(2px, 2px);
+}
+
+/* キーボード操作時のフォーカス可視化 */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--rpg-accent);
+  outline-offset: 2px;
 }
 
 /* フラッシュメッセージ */

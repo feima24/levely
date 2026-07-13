@@ -169,7 +169,7 @@
 }
 
 .panel-scroll-area--has-overflow:not(.panel-scroll-area--scrolled-bottom) {
-  box-shadow: inset 0 -20px 15px -15px rgba(74, 122, 181, 0.3);
+  box-shadow: inset 0 -20px 15px -15px rgba(143, 122, 70, 0.3);
 }
 
 .panel-scroll-area {
@@ -189,7 +189,7 @@
 .panel-item {
   padding: 0.4rem 0;
   font-size: 0.8rem;
-  border-bottom: 1px solid rgba(74, 122, 181, 0.15);
+  border-bottom: 1px solid rgba(143, 122, 70, 0.15);
 }
 
 .panel-item:last-child {
@@ -229,7 +229,7 @@
   background-color: rgba(255, 255, 255, 0.05);
   padding: 0.1rem 0.4rem;
   border-radius: 3px;
-  border: 1px solid rgba(74, 122, 181, 0.3);
+  border: 1px solid rgba(143, 122, 70, 0.3);
 }
 
 .panel-insights-label {
@@ -237,7 +237,7 @@
   color: var(--rpg-muted);
   margin-top: 0.8rem;
   margin-bottom: 0.2rem;
-  border-top: 1px solid rgba(74, 122, 181, 0.3);
+  border-top: 1px solid rgba(143, 122, 70, 0.3);
   padding-top: 0.5rem;
 }
 
@@ -478,8 +478,8 @@
 
 .modal-textarea {
   width: 100%;
-  background-color: var(--rpg-bg);
-  border: 1px solid var(--rpg-border);
+  background-color: #0a0e1a;
+  border: 2px solid var(--rpg-border);
   color: var(--rpg-text);
   padding: 0.6rem;
   font-size: 0.85rem;
@@ -546,8 +546,8 @@
 }
 
 .modal-input {
-  background-color: var(--rpg-bg);
-  border: 1px solid var(--rpg-border);
+  background-color: #0a0e1a;
+  border: 2px solid var(--rpg-border);
   color: var(--rpg-text);
   padding: 0.5rem 0.4rem;
   font-size: 0.8rem;
@@ -564,13 +564,21 @@
 }
 
 .modal-select {
-  background-color: var(--rpg-bg);
-  border: 1px solid var(--rpg-border);
+  background-color: #0a0e1a;
+  border: 2px solid var(--rpg-border);
   color: var(--rpg-text);
   padding: 0.3rem;
   font-size: 0.8rem;
   font-family: 'DotGothic16', monospace;
   width: 50px;
+}
+
+.modal-input:focus,
+.modal-select:focus,
+.modal-textarea:focus,
+.quest-modal-input:focus {
+  outline: none;
+  border-color: var(--rpg-accent);
 }
 
 .modal-duration-label {
@@ -599,11 +607,12 @@
 }
 
 .modal-save-btn {
-  background-color: var(--rpg-accent);
-  border: none;
+  background-color: var(--rpg-success);
+  border: 2px solid var(--frame-black);
+  box-shadow: 2px 2px 0 var(--frame-black);
   color: var(--rpg-bg);
   padding: 0.6rem 2rem;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 0.9rem;
   font-family: 'DotGothic16', monospace;
   cursor: pointer;
@@ -611,6 +620,7 @@
   white-space: nowrap;
 }
 .modal-save-btn:hover { opacity: 0.85; }
+.modal-save-btn:active { box-shadow: none; }
 .modal-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .modal-footer-status:empty {
@@ -697,7 +707,7 @@
   align-items: flex-start;
   gap: 0.7rem;
   padding: 0.6rem 0.8rem;
-  border: 1px solid rgba(74, 122, 181, 0.2);
+  border: 1px solid rgba(143, 122, 70, 0.2);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.02);
   transition: border-color 0.3s, box-shadow 0.3s;
@@ -866,14 +876,20 @@
 }
 
 .goal-confirm-yes {
-  background: var(--rpg-accent);
+  background: var(--rpg-success);
   color: var(--rpg-bg);
-  border-color: var(--rpg-accent);
+  border: 2px solid var(--frame-black);
+  box-shadow: 2px 2px 0 var(--frame-black);
+}
+
+.goal-confirm-yes:active {
+  box-shadow: none;
 }
 
 .goal-confirm-cancel {
   background: none;
   color: var(--rpg-text);
+  border: 2px solid var(--rpg-border);
 }
 
 .goal-confirm-close {
@@ -909,7 +925,7 @@
   display: block;
   margin-bottom: 1.5rem;
   padding-bottom: 1.2rem;
-  border-bottom: 1px solid rgba(74, 122, 181, 0.2);
+  border-bottom: 1px solid rgba(143, 122, 70, 0.2);
 }
 
 .quest-modal-title {
@@ -940,7 +956,7 @@
 
 .quest-modal-field {
   padding: 1rem 1.2rem;
-  border: 1px solid rgba(74, 122, 181, 0.2);
+  border: 1px solid rgba(143, 122, 70, 0.2);
   border-radius: 4px;
 }
 
@@ -985,8 +1001,8 @@
 
 .quest-modal-input {
   width: 100%;
-  background-color: var(--rpg-bg);
-  border: 1px solid var(--rpg-border);
+  background-color: #0a0e1a;
+  border: 2px solid var(--rpg-border);
   color: var(--rpg-text);
   padding: 0.7rem 0.8rem;
   font-size: 0.9rem;
@@ -1017,15 +1033,15 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.2rem;
-  border-top: 1px solid rgba(74, 122, 181, 0.2);
+  border-top: 1px solid rgba(143, 122, 70, 0.2);
 }
 
 .quest-modal-unlock-hint {
   margin-top: 1.2rem;
   padding: 0.7rem 1rem;
-  border: 1px solid rgba(74, 122, 181, 0.3);
+  border: 1px solid rgba(143, 122, 70, 0.3);
   border-radius: 4px;
-  background: rgba(74, 122, 181, 0.08);
+  background: rgba(143, 122, 70, 0.08);
   font-size: 0.8rem;
   color: var(--rpg-muted);
   text-align: center;
@@ -1048,16 +1064,20 @@
 .quest-modal-submit {
   font-size: 0.9rem;
   font-family: 'DotGothic16', monospace;
-  background: var(--rpg-accent);
+  background: var(--rpg-success);
   color: var(--rpg-bg);
-  border: none;
+  border: 2px solid var(--frame-black);
+  box-shadow: 2px 2px 0 var(--frame-black);
   padding: 0.6rem 2rem;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 2px;
   font-weight: bold;
 }
 .quest-modal-submit:hover {
   opacity: 0.85;
+}
+.quest-modal-submit:active {
+  box-shadow: none;
 }
 
 /* ===== レスポンシブ ===== */
