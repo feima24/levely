@@ -41,7 +41,7 @@
 
 .search-drawer-input {
   flex: 1;
-  background: var(--rpg-bg);
+  background: #0a0e1a;
   border: 2px solid var(--rpg-border);
   color: var(--rpg-text);
   font-family: 'DotGothic16', monospace;
