@@ -57,7 +57,7 @@ group :development, :test do
   gem 'rubocop-rails', require: false
 
   # RSpec for Rails [https://github.com/rspec/rspec-rails]
-  gem 'rspec-rails', '~> 6.0'
+  gem 'rspec-rails', '~> 8.0'
 end
 
 group :development do
