@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'LearningItems', type: :request do
   let(:user) { User.create!(email: 'test@example.com', password: 'password123', confirmed_at: Time.current) }
+  let(:other_user) { User.create!(email: 'other@example.com', password: 'password123', confirmed_at: Time.current) }
 
   before { sign_in user }
 
@@ -58,6 +59,22 @@ RSpec.describe 'LearningItems', type: :request do
       expect(response).to have_http_status(:conflict)
       expect(item.reload.summary).to eq '他の端末での更新'
     end
+
+    context '他ユーザーの学習記録に対してPATCHした場合' do
+      let(:other_category) { Category.create!(user: other_user, name: 'Ruby') }
+      let(:other_daily_log) { DailyLog.create!(user: other_user, date: Time.zone.today) }
+      let(:other_item) do
+        LearningItem.create!(daily_log: other_daily_log, category: other_category, summary: '相手の内容')
+      end
+
+      it '404になり、相手の記録は変更されない' do
+        params = { learning_item: { summary: '乗っ取り', lock_version: other_item.lock_version } }
+        patch "/learning_items/#{other_item.id}", params: params
+
+        expect(response).to have_http_status(:not_found)
+        expect(other_item.reload.summary).to eq '相手の内容'
+      end
+    end
   end
 
   describe 'DELETE /learning_items/:id' do
@@ -92,6 +109,21 @@ RSpec.describe 'LearningItems', type: :request do
 
       expect(response).to have_http_status(:no_content)
       expect(DailyLog.exists?(daily_log.id)).to be true
+    end
+
+    context '他ユーザーの学習記録に対してDELETEした場合' do
+      let(:other_category) { Category.create!(user: other_user, name: 'Ruby') }
+      let(:other_daily_log) { DailyLog.create!(user: other_user, date: Time.zone.today) }
+      let(:other_item) do
+        LearningItem.create!(daily_log: other_daily_log, category: other_category, summary: '相手の内容')
+      end
+
+      it '404になり、相手の記録は削除されない' do
+        delete "/learning_items/#{other_item.id}"
+
+        expect(response).to have_http_status(:not_found)
+        expect(LearningItem.exists?(other_item.id)).to be true
+      end
     end
   end
 end
