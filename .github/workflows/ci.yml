@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
@@ -55,6 +58,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     services:
       postgres:
@@ -92,8 +96,10 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-        run: bin/rails db:create db:migrate && bin/rspec
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/levely_test
+        run: |
+          bin/rails db:prepare
+          bundle exec rspec --format progress
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
