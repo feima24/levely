@@ -17,5 +17,39 @@ RSpec.describe 'Categories', type: :request do
         expect(other_category.reload.name).to eq '相手のカテゴリ'
       end
     end
+
+    context '自分のカテゴリを更新した場合' do
+      let(:category) { Category.create!(user: user, name: '元の名前') }
+
+      it '更新されて一覧にリダイレクトされる' do
+        patch "/categories/#{category.id}", params: { category: { name: '新しい名前' } }
+
+        expect(response).to redirect_to(categories_path)
+        expect(category.reload.name).to eq '新しい名前'
+      end
+    end
+
+    context '名前を空で更新した場合' do
+      let(:category) { Category.create!(user: user, name: '元の名前') }
+
+      it '422になり、名前は変更されない' do
+        patch "/categories/#{category.id}", params: { category: { name: '' } }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(category.reload.name).to eq '元の名前'
+      end
+    end
+  end
+
+  describe 'GET /categories' do
+    it '自分のカテゴリだけが表示される' do
+      Category.create!(user: user, name: '自分のカテゴリ')
+      Category.create!(user: other_user, name: '相手のカテゴリ')
+
+      get '/categories'
+
+      expect(response.body).to include('自分のカテゴリ')
+      expect(response.body).not_to include('相手のカテゴリ')
+    end
   end
 end
