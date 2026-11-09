@@ -15,8 +15,6 @@ Rails.application.routes.draw do
       patch :toggle
     end
   end
-  resources :histories, only: [:index]
-
   post 'semantic_search', to: 'semantic_search#search'
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
