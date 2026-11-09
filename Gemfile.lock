@@ -165,7 +165,7 @@ GEM
     loofah (2.25.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    mail (2.9.0)
+    mail (2.9.1)
       logger
       mini_mime (>= 0.1.1)
       net-imap
@@ -179,14 +179,14 @@ GEM
     msgpack (1.8.0)
     neighbor (1.0.0)
       activerecord (>= 7.2)
-    net-imap (0.5.13)
+    net-imap (0.5.15)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
     net-protocol (0.2.2)
       timeout
-    net-smtp (0.5.1)
+    net-smtp (0.5.2)
       net-protocol
     nio4r (2.7.5)
     nokogiri (1.19.2-aarch64-linux-gnu)
