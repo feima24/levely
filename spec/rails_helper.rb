@@ -66,3 +66,7 @@ RSpec.configure do |config|
   # Devise: request spec で sign_in / sign_out を使えるようにする
   config.include Devise::Test::IntegrationHelpers, type: :request
 end
+
+# 外部API（Cohere等）への実通信を防ぎ、各specで明示的にスタブさせる
+require 'webmock/rspec'
+WebMock.disable_net_connect!(allow_localhost: true)
