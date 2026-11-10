@@ -1,0 +1,10 @@
+# GitHub Copilot / OpenAI Codex 等から除外
+# Cursor の .cursorignore、Claude Code の .claude/settings.json と同等の保護
+
+# 環境変数ファイル
+.env
+.env.*
+
+# Rails の暗号鍵
+config/master.key
+config/credentials/*.key

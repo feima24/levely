@@ -4,13 +4,20 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   resources :daily_logs, only: %i[show update], param: :date do
     member do
-      post :find_related
+      post :generate_embedding
     end
   end
   resources :learning_items, only: %i[create update destroy]
   resources :categories, only: %i[index update]
   resources :monthlies, only: %i[show], param: :month
+  resources :monthly_goals, only: %i[create update destroy], param: :month do
+    member do
+      patch :toggle
+    end
+  end
   resources :histories, only: [:index]
+
+  post 'semantic_search', to: 'semantic_search#search'
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

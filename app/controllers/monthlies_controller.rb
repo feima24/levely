@@ -4,6 +4,7 @@ class MonthliesController < ApplicationController
     load_monthly_data
     load_stats
     load_today_data
+    load_monthly_goal
   rescue ArgumentError
     redirect_to monthly_path(Time.zone.today.strftime('%Y-%m'))
   end
@@ -17,6 +18,10 @@ class MonthliesController < ApplicationController
 
     @calendar_data = build_calendar_data(daily_logs)
     @category_totals = build_category_totals(daily_logs)
+    @weekly_totals = build_weekly_totals(daily_logs)
+
+    colors = %w[#ffd700 #4caf50 #ff6b6b #87ceeb #ff9800 #ab47bc #26a69a #ef5350]
+    @category_color_map = @category_totals.each_with_index.to_h { |(cat, _), i| [cat&.name, colors[i % colors.length]] }
   end
 
   def load_stats
@@ -33,8 +38,34 @@ class MonthliesController < ApplicationController
   end
 
   def build_calendar_data(daily_logs)
-    daily_logs.to_h do |log|
-      [log.date, log.learning_items.sum { |i| i.duration_minutes.to_i }]
+    daily_logs
+      .select(&:recorded?)
+      .to_h { |log| [log.date, log.learning_items.sum { |i| i.duration_minutes.to_i }] }
+  end
+
+  def build_weekly_totals(daily_logs)
+    logs_by_date = daily_logs.index_by(&:date)
+    weekly_date_ranges.filter_map { |days| build_week_totals(days, logs_by_date) }
+  end
+
+  def build_week_totals(days, logs_by_date)
+    week_logs = days.filter_map { |d| logs_by_date[d] }
+    category_minutes = build_category_totals(week_logs)
+    {
+      start_day: days.first.day,
+      end_day: days.last.day,
+      minutes: category_minutes.values.sum,
+      category_minutes: category_minutes
+    }
+  end
+
+  def weekly_date_ranges
+    first_monday = @month.beginning_of_month.beginning_of_week(:monday)
+    last_sunday = @month.end_of_month.end_of_week(:monday)
+
+    (first_monday..last_sunday).each_slice(7).filter_map do |week|
+      days = week.select { |d| d.month == @month.month }
+      days.presence
     end
   end
 
@@ -57,16 +88,29 @@ class MonthliesController < ApplicationController
   end
 
   def calc_streak
-    dates = current_user.daily_logs
-                        .where(date: ..Time.zone.today)
-                        .order(date: :desc)
-                        .pluck(:date)
+    today = Time.zone.today
+    dates = recorded_dates_desc(today)
+    return 0 if dates.empty? || dates.first < today - 1
+
+    base = dates.first
     count = 0
     dates.each_with_index do |date, i|
-      break unless date == Time.zone.today - i.days
+      break unless date == base - i.days
 
       count += 1
     end
     count
+  end
+
+  def recorded_dates_desc(today)
+    current_user.daily_logs
+                .where(date: ..today)
+                .includes(:learning_items)
+                .order(date: :desc)
+                .filter_map { |log| log.date if log.recorded? }
+  end
+
+  def load_monthly_goal
+    @monthly_goal = current_user.monthly_goals.find_by(month: @month)
   end
 end

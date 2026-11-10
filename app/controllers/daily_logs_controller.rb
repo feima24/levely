@@ -4,7 +4,7 @@ class DailyLogsController < ApplicationController
   def show
     load_daily_log
     respond_to do |format|
-      format.html
+      format.html { redirect_to monthly_path(@date.strftime('%Y-%m')) }
       format.json { render json: daily_log_json }
     end
   rescue ArgumentError
@@ -23,41 +23,28 @@ class DailyLogsController < ApplicationController
     end
   end
 
-  def find_related
-    daily_log = current_user.daily_logs.find_by!(date: params[:date])
-    related_logs = related_logs_for(daily_log)
+  def generate_embedding
+    @date = Date.iso8601(params[:date])
+    daily_log = current_user.daily_logs.find_by(date: @date)
 
-    render json: { results: related_logs_json(related_logs) }
+    return skip_embedding(daily_log) if skip_embedding?(daily_log)
+
+    upsert_embedding(daily_log)
+
+    render json: { success: true }
   end
 
   private
 
-  def related_logs_for(daily_log)
-    embedding = embedding_for(daily_log)
-
-    DailyLogEmbedding
-      .joins(:daily_log)
-      .where(daily_logs: { user_id: current_user.id })
-      .where.not(daily_log_id: daily_log.id)
-      .nearest_neighbors(:embedding, embedding, distance: 'cosine')
-      .limit(5)
-      .map(&:daily_log)
+  def upsert_embedding(daily_log)
+    vector = EmbeddingService.generate(daily_log_text(daily_log), input_type: 'search_query')
+    embedding = daily_log.daily_log_embedding || daily_log.build_daily_log_embedding
+    embedding.update!(embedding: vector, embedding_model: EmbeddingService::MODEL)
   end
 
-  def related_logs_json(related_logs)
-    related_logs.map do |log|
-      {
-        date: log.date,
-        items: log.learning_items.map { |item| learning_item_json(item) }
-      }
-    end
-  end
-
-  def learning_item_json(item)
-    {
-      body: item.summary,
-      category: item.category&.name
-    }
+  def embedding_for(daily_log)
+    upsert_embedding(daily_log) unless daily_log.daily_log_embedding
+    daily_log.daily_log_embedding.embedding
   end
 
   def load_daily_log
@@ -86,13 +73,16 @@ class DailyLogsController < ApplicationController
     }
   end
 
-  def embedding_for(daily_log)
-    DailyLogEmbedding.find_or_create_by!(daily_log: daily_log) do |record|
-      record.embedding = EmbeddingService.generate(daily_log_text(daily_log))
-    end.embedding
+  def daily_log_text(daily_log)
+    [*daily_log.learning_items.pluck(:summary), daily_log.insights].compact_blank.join("\n")
   end
 
-  def daily_log_text(daily_log)
-    daily_log.learning_items.pluck(:summary).join("\n")
+  def skip_embedding?(daily_log)
+    daily_log.nil? || daily_log_text(daily_log).blank?
+  end
+
+  def skip_embedding(daily_log)
+    daily_log&.daily_log_embedding&.destroy
+    render json: { success: true, skipped: true }
   end
 end

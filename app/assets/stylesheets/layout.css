@@ -1,6 +1,7 @@
-.app-layout {
+.app-shell {
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* ── サイドバー ── */
@@ -54,24 +55,22 @@
   white-space: nowrap;
 }
 
-.nav-item:hover {
-  color: var(--rpg-accent);
-}
-
 .nav-icon {
-  width: 1.2em;
-  text-align: center;
-  display: inline-block;
-  filter: brightness(3);
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-nav-item svg {
+.nav-item svg {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item--active {
   color: var(--rpg-accent);
 }
 
@@ -84,10 +83,20 @@ nav-item svg {
 
 .main-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.4rem 1rem;
   background: var(--rpg-panel);
   border-bottom: 2px solid var(--rpg-border);
+  position: sticky;
+  top: 0;
+  z-index: 700;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 /* ── ユーザーメニュー ── */
@@ -118,7 +127,8 @@ nav-item svg {
   height: 20px;
 }
 
-.user-icon-btn:hover {
+.user-icon-btn:hover,
+.user-icon-btn--active {
   border-color: var(--rpg-accent);
   color: var(--rpg-accent);
 }
@@ -165,4 +175,109 @@ nav-item svg {
 .main-content {
   flex: 1;
   padding: 1.5rem;
+  container-type: inline-size;
+  overflow-y: auto;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── サイドバー折りたたみ ── */
+.sidebar {
+  transition: margin-left 0.25s ease-in-out;
+}
+
+.app-layout--sidebar-collapsed .sidebar {
+  margin-left: -200px;
+}
+
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  left: 200px;
+  transform: translateY(-50%);
+  z-index: 50;
+  background: var(--rpg-panel);
+  border: 2px solid var(--rpg-border);
+  color: var(--rpg-text);
+  cursor: pointer;
+  padding: 0.6rem 0.3rem;
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.9rem;
+  transition: left 0.25s ease-in-out;
+}
+
+.sidebar-toggle:hover {
+  border-color: var(--rpg-accent);
+  color: var(--rpg-accent);
+}
+
+.app-layout--sidebar-collapsed .sidebar-toggle {
+  left: 0;
+}
+
+/* PCではデフォルトで非表示（@media の外） */
+.sidebar-close {
+  display: none;
+}
+
+/* スマホサイズ用の変更（@media は1つだけ） */
+@media (max-width: 800px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 48px;
+    bottom: 0;
+    width: 100%;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-in-out;
+    margin-left: 0;
+  }
+
+  .user-icon-btn:hover:not(.user-icon-btn--active) {
+    border-color: var(--rpg-border);
+    color: var(--rpg-text);
+  }
+
+  .app-shell:not(.app-layout--sidebar-collapsed) .sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .app-layout--sidebar-collapsed .sidebar {
+    margin-left: 0;
+  }
+
+  /* ×ボタンをスマホで表示 */
+  .sidebar-close {
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--rpg-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+  }
+  .sidebar-close:hover {
+    color: var(--rpg-accent);
+  }
+
+  /* ロゴを下にずらして×との縦距離を確保 */
+  .sidebar .sidebar-logo {
+    align-items: flex-start;
+    padding-top: 2rem;
+    padding-left: 0.5rem;
+  }
+
+  .main-header {
+    z-index: 1100;
+  }
 }

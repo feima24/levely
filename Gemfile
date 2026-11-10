@@ -40,7 +40,6 @@ gem 'rails-i18n'
 
 # AI / Embedding
 gem 'neighbor'
-gem 'ruby-openai'
 
 group :development, :test do
   # Load .env into ENV for local development and test [https://github.com/bkeepers/dotenv]
@@ -65,6 +64,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'letter_opener'
   gem 'web-console'
 end
 
