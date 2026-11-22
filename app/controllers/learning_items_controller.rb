@@ -47,7 +47,7 @@ class LearningItemsController < ApplicationController
     LearningItem
       .joins(:daily_log)
       .where(daily_logs: { user: current_user })
-      .find(params[:id])
+      .find(params.expect(:id))
   end
 
   def find_by_client_uuid(uuid)
