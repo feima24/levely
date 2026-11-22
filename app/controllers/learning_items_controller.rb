@@ -73,16 +73,11 @@ class LearningItemsController < ApplicationController
   end
 
   def learning_item_params
-    params.require(:learning_item).permit(
-      :summary, :duration_minutes,
-      :lock_version, :client_uuid
-    )
+    params.expect(learning_item: %i[summary duration_minutes lock_version client_uuid])
   end
 
   def learning_item_params_without_lock
-    params.require(:learning_item).permit(
-      :summary, :duration_minutes, :client_uuid
-    )
+    params.expect(learning_item: %i[summary duration_minutes client_uuid])
   end
 
   def apply_params_to(item)

@@ -43,7 +43,7 @@ class MonthlyGoalsController < ApplicationController
   end
 
   def goal_params
-    params.require(:monthly_goal).permit(:goal1, :goal2, :goal3)
+    params.expect(monthly_goal: %i[goal1 goal2 goal3])
   end
 
   def goal_json(goal)
