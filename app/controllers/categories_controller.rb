@@ -4,7 +4,7 @@ class CategoriesController < ApplicationController
   end
 
   def update
-    @category = current_user.categories.find(params[:id])
+    @category = current_user.categories.find(params.expect(:id))
     if @category.update(category_params)
       redirect_to categories_path, notice: '更新しました'
     else
