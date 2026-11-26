@@ -81,7 +81,7 @@ Devise の `:confirmable` を使った本人確認付きサインアップ。
 
 | 領域                 | 使用技術                                                                                                                          |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 言語・フレームワーク | Ruby 3.3.0 / Rails 7.2                                                                                                            |
+| 言語・フレームワーク | Ruby 3.4.13 / Rails 8.1                                                                                                           |
 | フロントエンド       | Hotwire (Turbo, Stimulus) / Importmap                                                                                             |
 | データベース         | PostgreSQL + [pgvector](https://github.com/pgvector/pgvector)                                                                     |
 | 認証                 | Devise（`:confirmable` 有効）                                                                                                     |
@@ -270,8 +270,8 @@ SendGrid の SMTP を本番で利用、開発時は letter_opener で内容確�
 
 ### 前提
 
-- Ruby 3.3.0（`.ruby-version` に準拠）
-- Rails 7.2.x
+- Ruby 3.4.13（`.ruby-version` に準拠）
+- Rails 8.1.x
 - PostgreSQL（開発・本番ともに想定）
 
 ### 手順
